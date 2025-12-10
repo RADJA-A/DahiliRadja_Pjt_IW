@@ -1,0 +1,9 @@
+package com.gerement.gestion_notifications.model;
+
+public enum TypeNotification {
+    CONFIRMATION_INSCRIPTION,
+    ANNULATION_INSCRIPTION,
+    MODIFICATION_EVENEMENT,
+    ANNULATION_EVENEMENT,
+    RAPPEL_EVENEMENT
+}

@@ -1,0 +1,2 @@
+$env:MAVEN_OPTS="-Xms128m -Xmx256m"
+.\mvnw spring-boot:run

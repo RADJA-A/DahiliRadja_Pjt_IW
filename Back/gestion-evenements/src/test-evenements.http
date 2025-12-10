@@ -1,0 +1,219 @@
+### Variables
+@baseUrl = http://localhost:8082/api/evenements
+@userId = 1
+@evenementId = 1
+
+###############################################
+# TEST 1 : Créer un événement - Conférence
+###############################################
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "titre": "Conférence sur l'IA",
+  "type": "CONFERENCE",
+  "lieu": "Université Alger 1",
+  "dateDebut": "2025-12-15T09:00:00",
+  "dateFin": "2025-12-15T17:00:00",
+  "capaciteMax": 100,
+  "organisateurId": 1,
+  "imageUrl": "https://example.com/image.jpg",
+  "programme": "Programme de la journée...",
+  "planSalle": "Plan de la salle..."
+}
+
+###############################################
+# TEST 2 : Créer un événement - Formation
+###############################################
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "titre": "Formation Spring Boot",
+  "type": "FORMATION",
+  "lieu": "Salle informatique B",
+  "dateDebut": "2025-12-20T10:00:00",
+  "dateFin": "2025-12-22T16:00:00",
+  "capaciteMax": 30,
+  "organisateurId": 1,
+  "documents": ["https://example.com/doc1.pdf", "https://example.com/doc2.pdf"]
+}
+
+###############################################
+# TEST 3 : Créer un événement - Concert
+###############################################
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "titre": "Concert de musique classique",
+  "type": "CONCERT",
+  "lieu": "Opera",
+  "dateDebut": "2025-12-25T20:00:00",
+  "dateFin": "2025-12-25T23:00:00",
+  "capaciteMax": 200,
+  "organisateurId": 1,
+  "imageUrl": "https://example.com/concert.jpg"
+}
+
+###############################################
+# TEST 4 : Lister tous les événements
+###############################################
+GET {{baseUrl}}
+
+###############################################
+# TEST 5 : Obtenir un événement par ID
+###############################################
+GET {{baseUrl}}/{{evenementId}}
+
+###############################################
+# TEST 6 : Obtenir événements d'un organisateur
+###############################################
+GET {{baseUrl}}/organisateur/{{userId}}
+
+###############################################
+# TEST 7 : Rechercher par lieu
+###############################################
+GET {{baseUrl}}/search?lieu=M'Sila
+
+###############################################
+# TEST 8 : Rechercher par type CONFERENCE
+###############################################
+GET {{baseUrl}}/search?type=CONFERENCE
+
+###############################################
+# TEST 9 : Rechercher par type FORMATION
+###############################################
+GET {{baseUrl}}/search?type=FORMATION
+
+###############################################
+# TEST 11 : Recherche combinée (lieu + type)
+###############################################
+GET {{baseUrl}}/search?lieu=Salle&type=FORMATION
+
+###############################################
+# TEST 12 : Modifier un événement
+###############################################
+PUT {{baseUrl}}/{{evenementId}}
+Content-Type: application/json
+User-Id: {{userId}}
+
+{
+  "titre": "Grande Conférence sur l'IA et le Machine Learning",
+  "lieu": "Grand Amphithéâtre - Université M'Sila",
+  "capaciteMax": 150
+}
+
+###############################################
+# TEST 13 : Modifier le statut d'un événement
+###############################################
+PUT {{baseUrl}}/{{evenementId}}
+Content-Type: application/json
+User-Id: {{userId}}
+
+{
+  "statut": "ENCOURS"
+}
+
+###############################################
+# TEST 14 : Incrémenter le nombre d'inscrits
+###############################################
+POST {{baseUrl}}/{{evenementId}}/incrementer-inscrits
+
+###############################################
+# TEST 15 : Vérifier l'incrémentation
+###############################################
+GET {{baseUrl}}/{{evenementId}}
+
+###############################################
+# TEST 16 : Incrémenter plusieurs fois
+###############################################
+POST {{baseUrl}}/{{evenementId}}/incrementer-inscrits
+
+###
+POST {{baseUrl}}/{{evenementId}}/incrementer-inscrits
+
+###
+POST {{baseUrl}}/{{evenementId}}/incrementer-inscrits
+
+###############################################
+# TEST 17 : Décrémenter le nombre d'inscrits
+###############################################
+POST {{baseUrl}}/{{evenementId}}/decrementer-inscrits
+
+###############################################
+# TEST 18 : Statistiques d'un organisateur
+###############################################
+GET {{baseUrl}}/statistiques/{{userId}}
+
+###############################################
+# TEST 19 : Supprimer un événement
+###############################################
+DELETE {{baseUrl}}/2
+User-Id: {{userId}}
+
+###############################################
+# TEST 20 : Vérifier la suppression (doit retourner 404)
+###############################################
+GET {{baseUrl}}/2
+
+###############################################
+# TESTS DE VALIDATION
+###############################################
+
+### TEST 21 : Créer événement avec date dans le passé (ERREUR attendue)
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "titre": "Événement passé",
+  "type": "CONFERENCE",
+  "lieu": "Salle A",
+  "dateDebut": "2020-01-01T09:00:00",
+  "dateFin": "2020-01-01T17:00:00",
+  "capaciteMax": 50,
+  "organisateurId": 1
+}
+
+### TEST 22 : Créer événement avec date fin avant date début (ERREUR attendue)
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "titre": "Événement invalide",
+  "type": "CONFERENCE",
+  "lieu": "Salle A",
+  "dateDebut": "2025-12-20T17:00:00",
+  "dateFin": "2025-12-20T09:00:00",
+  "capaciteMax": 50,
+  "organisateurId": 1
+}
+
+### TEST 23 : Créer événement sans titre (ERREUR attendue)
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "type": "CONFERENCE",
+  "lieu": "Salle A",
+  "dateDebut": "2025-12-20T09:00:00",
+  "dateFin": "2025-12-20T17:00:00",
+  "capaciteMax": 50,
+  "organisateurId": 1
+}
+
+### TEST 24 : Modifier événement avec mauvais User-Id (ERREUR 403 attendue)
+PUT {{baseUrl}}/{{evenementId}}
+Content-Type: application/json
+User-Id: 999
+
+{
+  "titre": "Tentative de modification non autorisée"
+}
+
+### TEST 25 : Supprimer événement avec mauvais User-Id (ERREUR 403 attendue)
+DELETE {{baseUrl}}/{{evenementId}}
+User-Id: 999
+
+### TEST 26 : Obtenir événement inexistant (ERREUR 404 attendue)
+GET {{baseUrl}}/9999
