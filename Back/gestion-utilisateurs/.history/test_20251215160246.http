@@ -1,0 +1,133 @@
+### Test 1: Inscription d'un nouvel utilisateur ORGANIZER
+POST http://localhost:8081/api/auth/signup
+Content-Type: application/json
+
+{
+  "nom": "biska",
+  "prenom": "bridget",
+  "email": "bb@test.com",
+  "password": "123456",
+  "role": "ORGANIZER"
+}
+
+###
+
+### Test 2: Inscription d'un autre organisateur
+POST http://localhost:8081/api/auth/signup
+Content-Type: application/json
+
+{
+  "nom": "ells",
+  "prenom": "ella",
+  "email": "ella@test.com",
+  "password": "password",
+  "role": "ORGANIZER"
+}
+
+###
+
+### Test 3: Connexion
+POST http://localhost:8081/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "bb@test.com",
+  "password": "123456"
+}
+
+###
+
+### Test 4: Inscription PARTICIPANT
+POST http://localhost:8081/api/auth/signup
+Content-Type: application/json
+
+{
+  "nom": "olaf",
+  "prenom": "oat",
+  "email": "ol@test.com",
+  "password": "password123",
+  "role": "PARTICIPANT"
+}
+
+###
+
+### Test 5: Inscription ADMIN
+POST http://localhost:8081/api/auth/signup
+Content-Type: application/json
+
+{
+  "nom": "Admin1",
+  "prenom": "System",
+  "email": "admin1@test.com",
+  "password": "admin123",
+  "role": "ADMIN"
+}
+
+###
+
+### Test 6: Login avec participant
+POST http://localhost:8081/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "participant@test.com",
+  "password": "password123"
+}
+
+###
+
+### Test 7: Erreur - Rôle invalide
+POST http://localhost:8081/api/auth/signup
+Content-Type: application/json
+
+{
+  "nom": "Test",
+  "prenom": "Error",
+  "email": "error@test.com",
+  "password": "password123",
+  "role": "ORAGAN"
+}
+
+##
+
+### Test 8: GET user by ID (avec token)
+GET http://localhost:8081/api/users/1
+Authorization: Bearer {{auth_token}}
+
+###
+
+### Test 9: GET user by email (avec token)
+GET http://localhost:8081/api/users/by-email?email=bb@test.com
+Authorization: Bearer {{auth_token}}
+
+###
+
+### Test 10: GET multiple users by IDs
+POST http://localhost:8081/api/users/batch
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "ids": [1, 2, 3]
+}
+
+###
+
+### Test 11: Login admin
+POST http://localhost:8081/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin1@test.com",
+  "password": "admin123"
+}
+
+> {% 
+    client.global.set("auth_token_admin", response.body.token);
+%}
+
+###
+
+### Test 12: GET all user info with admin token
+GET http://localhost:8081/api/users/2
+Authorization: Bearer {{auth_token_admin}}

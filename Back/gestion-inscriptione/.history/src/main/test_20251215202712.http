@@ -1,0 +1,93 @@
+### Variables
+@baseUrl = http://localhost:8084/api/inscriptions
+@userId = 1
+@evenementId = 1
+
+######################
+POST /api/users/10
+#########################
+
+POST /api/users/batch
+Body: { "ids": [10, 20, 30] }
+# PARTICIPANT : S'inscrire à un événement
+
+###############################################
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "userId":9,
+  "evenementId": 3
+}
+
+###############################################
+# PARTICIPANT : S'inscrire à un autre événement
+###############################################
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "userId": 8,
+  "evenementId": 1
+}
+
+###############################################
+# PARTICIPANT : Voir mes inscriptions
+###############################################
+GET {{baseUrl}}/user/9
+
+###############################################
+# PARTICIPANT : Se désinscrire
+###############################################
+DELETE {{baseUrl}}/24
+
+###############################################
+# ORGANISATEUR : Voir les participants de mon événement
+###############################################
+GET {{baseUrl}}/evenement/8
+
+###############################################
+# TEST COMPLET : Workflow avec 3 microservices
+###############################################
+
+### Étape 1 : Créer un événement (Microservice Événements)
+POST http://localhost:8082/api/evenements
+Content-Type: application/json
+
+{
+  "titre": "concert sp",
+  "type": "CONCERT",
+  "lieu": "South Parc",
+  "dateDebut": "2025-12-20T10:00:00",
+  "dateFin": "2025-12-20T16:00:00",
+  "capaciteMax": 50,
+  "organisateurId": 2
+}
+
+### Étape 2 : S'inscrire à cet événement (Microservice Inscriptions)
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "userId": 2,
+  "evenementId": 23
+}
+
+### Étape 3 : Vérifier les notifications (Microservice Notifications)
+GET http://localhost:8083/api/notifications/user/1
+
+### Étape 4 : Vérifier que le nombre d'inscrits a augmenté
+GET http://localhost:8082/api/evenements/1
+
+### Étape 5 : Se désinscrire
+DELETE {{baseUrl}}/23
+
+### Étape 6 : Vérifier les nouvelles notifications
+GET http://localhost:8083/api/notifications/user/1
+
+### Étape 7 : Vérifier que le nombre d'inscrits a diminué
+GET http://localhost:8082/api/evenements/1
+
+
+###test
+GET http://localhost:8082/api/evenements/15

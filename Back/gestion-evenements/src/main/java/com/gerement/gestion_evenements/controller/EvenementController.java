@@ -94,5 +94,11 @@ public class EvenementController {
         return ResponseEntity.ok(stats);
     }
 
+@PostMapping("/status/update")
+public ResponseEntity<Void> updateEventStatuses() {
+    evenementService.mettreAJourStatutsAutomatiquement();
+    return ResponseEntity.ok().build();
+}
+
 
 }

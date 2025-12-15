@@ -1,13 +1,10 @@
 package com.gerement.gestion_inscriptione.service;
 
-import com.gerement.gestion_inscriptione.client.EvenementClient;
-import com.gerement.gestion_inscriptione.client.NotificationClient;
 import com.gerement.gestion_inscriptione.dto.CreateInscriptionDTO;
 import com.gerement.gestion_inscriptione.dto.InscriptionDTO;
 import com.gerement.gestion_inscriptione.model.Inscription;
 import com.gerement.gestion_inscriptione.repository.InscriptionRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
@@ -16,12 +13,9 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional
-@Slf4j
 public class InscriptionService {
     
     private final InscriptionRepository inscriptionRepository;
-    private final EvenementClient evenementClient;
-    private final NotificationClient notificationClient;
     
     // S'inscrire à un événement
     public InscriptionDTO inscrire(CreateInscriptionDTO dto) {
@@ -37,12 +31,6 @@ public class InscriptionService {
         
         Inscription saved = inscriptionRepository.save(inscription);
         
-        // Incrémenter le nombre d'inscrits dans Événements
-        evenementClient.incrementerInscrits(dto.getEvenementId());
-        
-        // Envoyer notification
-        notificationClient.envoyerConfirmationInscription(dto.getUserId(), dto.getEvenementId(), saved.getId());
-        
         return convertToDTO(saved);
     }
     
@@ -51,13 +39,6 @@ public class InscriptionService {
         Inscription inscription = inscriptionRepository.findById(inscriptionId)
             .orElseThrow(() -> new RuntimeException("Inscription non trouvée"));
         
-        // Décrémenter le nombre d'inscrits
-        evenementClient.decrementerInscrits(inscription.getEvenementId());
-        
-        // Envoyer notification
-        notificationClient.envoyerAnnulationInscription(inscription.getUserId(), inscription.getEvenementId());
-        
-        // Supprimer l'inscription
         inscriptionRepository.delete(inscription);
     }
     
@@ -73,6 +54,11 @@ public class InscriptionService {
         return inscriptionRepository.findByEvenementId(evenementId).stream()
             .map(this::convertToDTO)
             .collect(Collectors.toList());
+    }
+    
+    // Vérifier si un utilisateur est inscrit à un événement
+    public boolean verifierInscription(Long userId, Long evenementId) {
+        return inscriptionRepository.existsByUserIdAndEvenementId(userId, evenementId);
     }
     
     private InscriptionDTO convertToDTO(Inscription inscription) {

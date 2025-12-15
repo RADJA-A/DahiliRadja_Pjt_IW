@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 import java.util.List;
 
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.gerement.gestion_evenements.dto.CreateEvenementDTO;
@@ -31,6 +32,17 @@ public class EvenementService {
 
     private final EvenementRepository evenementRepository;
 
+    private StatutEvenement determineStatut(LocalDateTime dateDebut, LocalDateTime dateFin) {
+        LocalDateTime now = LocalDateTime.now();
+        
+        if (dateDebut.isAfter(now)) {
+            return StatutEvenement.AVENIR;
+        } else if (dateDebut.isBefore(now) && dateFin.isAfter(now)) {
+            return StatutEvenement.ENCOURS;
+        } else {
+            return StatutEvenement.TERMINE;
+        }
+    }
 
     public EvenementDTO creatEvenement (CreateEvenementDTO dto){
         validateDates(dto.getDateDebut(), dto.getDateFin());
@@ -197,6 +209,37 @@ public class EvenementService {
         }
     }
 
+     @Scheduled(cron = "0 0/30 * * * *") // Exécuter toutes les 30 minutes
+public void mettreAJourStatutsAutomatiquement() {
+    List<Evenements> evenements = evenementRepository.findAll();
+    LocalDateTime now = LocalDateTime.now();
+    
+    for (Evenements evenement : evenements) {
+        // Ne pas modifier les événements annulés
+        if (evenement.getStatut() == StatutEvenement.ANNULE) {
+            continue;
+        }
+        
+        // Vérifier si la date de fin est passée
+        if (evenement.getDateFin().isBefore(now)) {
+            // Si l'événement était AVENIR ou ENCOURS, le passer à TERMINE
+            if (evenement.getStatut() == StatutEvenement.AVENIR || 
+                evenement.getStatut() == StatutEvenement.ENCOURS) {
+                evenement.setStatut(StatutEvenement.TERMINE);
+                evenement.setDateModification(now);
+                evenementRepository.save(evenement); // ← IMPORTANT : sauvegarder
+            }
+        }
+    }
+}
+    
+    /**
+     * Méthode pour déterminer le statut en temps réel
+     * Utilisée pour les réponses API
+     */
+
+    
+
      private EvenementDTO convertToDTO(Evenements evenement) {
         EvenementDTO dto = new EvenementDTO();
         dto.setId(evenement.getId());
@@ -208,7 +251,6 @@ public class EvenementService {
         dto.setCapaciteMax(evenement.getCapaciteMax());
         dto.setNombreInscrits(evenement.getNombreInscrits());
         dto.setOrganisateurId(evenement.getOrganisateurId());
-        dto.setStatut(evenement.getStatut());
         dto.setDocuments(evenement.getDocuments());
         dto.setImageUrl(evenement.getImageUrl());
         dto.setVideoUrl(evenement.getVideoUrl());
@@ -217,6 +259,17 @@ public class EvenementService {
         dto.setDateCreation(evenement.getDateCreation());
         dto.setDateModification(evenement.getDateModification());
         dto.setPlacesDisponibles(evenement.getCapaciteMax() - evenement.getNombreInscrits());
+        
+        // CALCULEZ LE STATUT AUTOMATIQUEMENT
+        if (evenement.getStatut() == StatutEvenement.ANNULE) {
+            // Si annulé, garde annulé
+            dto.setStatut(evenement.getStatut());
+        } else {
+            // Sinon, calcule automatiquement selon les dates
+            dto.setStatut(determineStatut(evenement.getDateDebut(), evenement.getDateFin()));
+        }
+        
+        
         return dto;
     }
 

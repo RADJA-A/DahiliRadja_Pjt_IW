@@ -1,0 +1,296 @@
+### Variables
+@baseUrl = http://localhost:8082/api/evenements
+@userId = 1
+@evenementId = 1
+
+###############################################
+# TESTS POUR LES STATUTS AUTOMATIQUES
+###############################################
+
+### TEST 1 : Créer un événement qui se termine dans le FUTUR
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "titre": "Événement FUTUR - Statut AVENIR attendu",
+  "type": "CONFERENCE",
+  "lieu": "Salle A",
+  "dateDebut": "2025-12-31T14:00:00",
+  "dateFin": "2025-12-31T18:00:00",
+  "capaciteMax": 50,
+  "organisateurId": 1
+}
+
+### TEST 2 : Créer un événement qui est EN COURS (dateDebut dans le passé, dateFin dans le futur)
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "titre": "Événement EN COURS",
+  "type": "FORMATION",
+  "lieu": "Salle B",
+  "dateDebut": "2024-01-01T10:00:00",  # Date dans le passé
+  "dateFin": "2026-12-31T18:00:00",    # Date dans le futur
+  "capaciteMax": 30,
+  "organisateurId": 1
+}
+
+### TEST 3 : Créer un événement qui est TERMINE (toutes les dates dans le passé)
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "titre": "Événement TERMINE - Toutes dates passées",
+  "type": "CONCERT",
+  "lieu": "Opéra",
+  "dateDebut": "2024-06-01T20:00:00",
+  "dateFin": "2024-06-01T23:00:00",
+  "capaciteMax": 100,
+  "organisateurId": 1
+}
+
+### TEST 4 : Créer un événement ANNULE
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "titre": "Événement ANNULE",
+  "type": "CONFERENCE",
+  "lieu": "Salle C",
+  "dateDebut": "2025-01-15T09:00:00",
+  "dateFin": "2025-01-15T17:00:00",
+  "capaciteMax": 80,
+  "organisateurId": 1
+}
+
+### TEST 5 : Mettre à jour l'événement 4 en ANNULE
+PUT {{baseUrl}}/4
+Content-Type: application/json
+User-Id: {{userId}}
+
+{
+  "statut": "ANNULE"
+}
+
+### TEST 6 : Vérifier le statut des événements créés
+GET {{baseUrl}}
+
+### TEST 7 : Vérifier un événement spécifique FUTUR
+GET {{baseUrl}}/1
+
+### TEST 8 : Vérifier un événement spécifique TERMINE
+GET {{baseUrl}}/3
+
+### TEST 9 : Vérifier un événement spécifique ANNULE
+GET {{baseUrl}}/4
+
+###############################################
+# TEST 10 : Créer événement avec date de fin DANS 1 MINUTE
+# (Pour tester le changement automatique de statut)
+###############################################
+# Calculer la date dans 1 minute
+# Utilisez ceci si votre client HTTP supporte les variables dynamiques
+# Sinon, remplacez par des dates fixes
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "titre": "Test changement statut automatique",
+  "type": "CONFERENCE",
+  "lieu": "Salle de test",
+  "dateDebut": "2024-01-01T10:00:00",
+  "dateFin": "2024-01-01T10:01:00",  # Se termine dans 1 minute
+  "capaciteMax": 10,
+  "organisateurId": 1
+}
+
+###############################################
+# TEST 11 : Forcer la mise à jour manuelle des statuts
+# (Appelle la méthode @Scheduled manuellement)
+###############################################
+POST {{baseUrl}}/update-status
+
+### TEST 12 : Vérifier si les statuts ont été mis à jour
+GET {{baseUrl}}
+
+###############################################
+# TEST 13 : Incrémenter jusqu'à capacité max pour voir le statut changer
+###############################################
+# Créer un petit événement pour le test
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "titre": "Test capacité max",
+  "type": "FORMATION",
+  "lieu": "Petite salle",
+  "dateDebut": "2025-12-20T10:00:00",
+  "dateFin": "2025-12-20T12:00:00",
+  "capaciteMax": 3,
+  "organisateurId": 1
+}
+
+### Obtenir l'ID du nouvel événement
+GET {{baseUrl}}
+
+### Incrémenter 1ère inscription
+POST {{baseUrl}}/6/incrementer-inscrits
+
+### Incrémenter 2ème inscription
+POST {{baseUrl}}/6/incrementer-inscrits
+
+### Incrémenter 3ème inscription (capacité max atteinte)
+POST {{baseUrl}}/6/incrementer-inscrits
+
+### Vérifier que le statut est passé à TERMINE (car capacité max atteinte)
+GET {{baseUrl}}/6
+
+### TEST 14 : Décrémenter pour voir le statut revenir
+POST {{baseUrl}}/6/decrementer-inscrits
+
+### Vérifier que le statut est revenu à AVENIR
+GET {{baseUrl}}/6
+
+###############################################
+# TEST 15 : Statistiques pour vérifier les compteurs
+###############################################
+GET {{baseUrl}}/statistiques/{{userId}}
+
+###############################################
+# TESTS DE VALIDATION DES STATUTS
+###############################################
+
+### TEST 16 : Créer événement avec statut invalide (ERREUR attendue)
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "titre": "Événement statut invalide",
+  "type": "CONFERENCE",
+  "lieu": "Salle A",
+  "dateDebut": "2025-12-20T09:00:00",
+  "dateFin": "2025-12-20T17:00:00",
+  "capaciteMax": 50,
+  "organisateurId": 1,
+  "statut": "STATUT_INEXISTANT"  # Ce statut n'existe pas
+}
+
+### TEST 17 : Vérifier recherche par statut AVENIR
+GET {{baseUrl}}/search?statut=AVENIR
+
+### TEST 18 : Vérifier recherche par statut ENCOURS
+GET {{baseUrl}}/search?statut=ENCOURS
+
+### TEST 19 : Vérifier recherche par statut TERMINE
+GET {{baseUrl}}/search?statut=TERMINE
+
+### TEST 20 : Vérifier recherche par statut ANNULE
+GET {{baseUrl}}/search?statut=ANNULE
+
+###############################################
+# TESTS POUR LE FRONTEND
+###############################################
+
+### TEST 21 : Obtenir tous les événements avec leurs places disponibles
+GET {{baseUrl}}
+
+### TEST 22 : Vérifier un événement avec image et programme
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "titre": "Événement complet pour test frontend",
+  "type": "CONFERENCE",
+  "lieu": "Grand auditorium",
+  "dateDebut": "2025-03-15T09:00:00",
+  "dateFin": "2025-03-15T18:00:00",
+  "capaciteMax": 200,
+  "organisateurId": 1,
+  "imageUrl": "https://picsum.photos/800/400",
+  "videoUrl": "https://example.com/video.mp4",
+  "programme": "09:00 - Accueil\n10:00 - Keynote\n12:00 - Déjeuner\n14:00 - Ateliers",
+  "planSalle": "Salle en U avec 200 places assises",
+  "documents": [
+    "https://example.com/programme.pdf",
+    "https://example.com/presentations.zip"
+  ]
+}
+
+### TEST 23 : Recherche avancée combinant plusieurs critères
+GET {{baseUrl}}/search?lieu=auditorium&type=CONFERENCE&statut=AVENIR
+
+###############################################
+# TESTS DE PERFORMANCE POUR LE SCHEDULED TASK
+###############################################
+
+### TEST 24 : Créer plusieurs événements pour tester la mise à jour en masse
+# (Exécuter plusieurs fois avec des dates différentes)
+
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "titre": "Événement batch 1",
+  "type": "FORMATION",
+  "lieu": "Salle 1",
+  "dateDebut": "2024-01-01T09:00:00",
+  "dateFin": "2024-01-01T10:00:00",
+  "capaciteMax": 20,
+  "organisateurId": 1
+}
+
+###
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "titre": "Événement batch 2",
+  "type": "CONFERENCE",
+  "lieu": "Salle 2",
+  "dateDebut": "2024-02-01T09:00:00",
+  "dateFin": "2024-02-01T10:00:00",
+  "capaciteMax": 30,
+  "organisateurId": 1
+}
+
+###
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "titre": "Événement batch 3",
+  "type": "CONCERT",
+  "lieu": "Salle 3",
+  "dateDebut": "2024-03-01T09:00:00",
+  "dateFin": "2024-03-01T10:00:00",
+  "capaciteMax": 40,
+  "organisateurId": 1
+}
+
+### TEST 25 : Forcer la mise à jour et vérifier que tous sont TERMINE
+POST {{baseUrl}}/update-status
+
+### Vérifier que tous les événements batch sont TERMINE
+GET {{baseUrl}}/search?statut=TERMINE
+
+### TEST 26 : Vérifier qu'un événement ANNULE ne change pas
+# Créer un événement annulé dans le passé
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "titre": "Événement annulé dans le passé",
+  "type": "CONFERENCE",
+  "lieu": "Salle annulée",
+  "dateDebut": "2024-01-01T09:00:00",
+  "dateFin": "2024-01-01T10:00:00",
+  "capaciteMax": 10,
+  "organisateurId": 1,
+  "statut": "ANNULE"
+}
+
+### Forcer la mise à jour
+POST {{baseUrl}}/update-status
+
+### Vérifier que l'événement est toujours ANNULE (ne doit pas devenir TERMINE)
+GET {{baseUrl}}/search?statut=ANNULE

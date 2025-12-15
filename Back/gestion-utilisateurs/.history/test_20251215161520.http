@@ -1,0 +1,100 @@
+### Test 1: Inscription d'un nouvel utilisateur ORGANIZER
+POST http://localhost:8081/api/auth/signup
+Content-Type: application/json
+
+{
+  "nom": "biska",
+  "prenom": "bridget",
+  "email": "bb@test.com",
+  "password": "123456",
+  "role": "ORGANIZER"
+}
+
+###
+
+### Test 2: Inscription d'un autre organisateur
+POST http://localhost:8081/api/auth/signup
+Content-Type: application/json
+
+{
+  "nom": "ells",
+  "prenom": "ella",
+  "email": "ella@test.com",
+  "password": "password",
+  "role": "ORGANIZER"
+}
+
+###
+
+### Test 3: Connexion
+POST http://localhost:8081/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "bb@test.com",
+  "password": "123456"
+}
+
+### Test 8: Récupérer un utilisateur par ID (doit être authentifié)
+GET http://localhost:8081/api/users/16
+Authorization: Bearer VOTRE_TOKEN_JWT_ICI
+
+
+### Test 4: Inscription PARTICIPANT
+POST http://localhost:8081/api/auth/signup
+Content-Type: application/json
+
+{
+  "nom": "olaf",
+  "prenom": "oat",
+  "email": "ol@test.com",
+  "password": "password123",
+  "role": "PARTICIPANT"
+}
+
+###
+
+### Test 5: Inscription ADMIN
+POST http://localhost:8081/api/auth/signup
+Content-Type: application/json
+
+{
+  "nom": "Admin1",
+  "prenom": "System",
+  "email": "admin1@test.com",
+  "password": "admin123",
+  "role": "ADMIN"
+}
+
+###
+
+### Test 6: Login avec participant
+POST http://localhost:8081/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "participant@test.com",
+  "password": "password123"
+}
+
+###
+
+### Test 7: Erreur - Rôle invalide
+POST http://localhost:8081/api/auth/signup
+Content-Type: application/json
+
+{
+  "nom": "Test",
+  "prenom": "Error",
+  "email": "error@test.com",
+  "password": "password123",
+  "role": "ORAGAN"
+}
+
+##
+
+### Test 8: GET user by ID (avec token)
+GET http://localhost:8081/api/users/1
+
+
+###
