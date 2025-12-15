@@ -1,0 +1,69 @@
+<div class="center-wrapper">
+  <form class="signup-container" [formGroup]="signupForm" (ngSubmit)="onSubmit()">
+    <h2>Créer un compte</h2>
+
+    <div *ngIf="successMessage" class="success-message">
+      {{ successMessage }}
+    </div>
+
+    <div *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
+    </div>
+
+    <label for="nom">Nom</label>
+    <input 
+      type="text" 
+      id="nom" 
+      formControlName="nom"
+      placeholder="Votre nom" 
+    />
+    <div *ngIf="signupForm.get('nom')?.invalid && signupForm.get('nom')?.touched" class="error">
+      Le nom est requis
+    </div>
+
+    <label for="prenom">Prénom</label>
+    <input 
+      type="text" 
+      id="prenom" 
+      formControlName="prenom"
+      placeholder="Votre prénom" 
+    />
+    <div *ngIf="signupForm.get('prenom')?.invalid && signupForm.get('prenom')?.touched" class="error">
+      Le prénom est requis
+    </div>
+
+    <label for="email">Email</label>
+    <input 
+      type="email" 
+      id="email" 
+      formControlName="email"
+      placeholder="votre@email.com" 
+    />
+    <div *ngIf="signupForm.get('email')?.invalid && signupForm.get('email')?.touched" class="error">
+      Veuillez entrer un email valide
+    </div>
+
+    <label for="password">Mot de passe</label>
+    <input 
+      type="password" 
+      id="password" 
+      formControlName="password"
+      placeholder="Minimum 6 caractères" 
+    />
+    <div *ngIf="signupForm.get('password')?.invalid && signupForm.get('password')?.touched" class="error">
+      Le mot de passe doit contenir au moins 6 caractères
+    </div>
+
+    <label for="role">Type de compte</label>
+    <select id="role" formControlName="role">
+      <option value="PARTICIPANT">Participant</option>
+      <option value="ORGANIZER">Organisateur</option>
+    </select>
+
+    <button type="submit" [disabled]="signupForm.invalid">Sinscrire</button>
+    
+    <p class="login-link">
+      Déjà un compte? <a routerLink="/login">Se connecter</a>
+    </p>
+  </form>
+</div>

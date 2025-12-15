@@ -1,0 +1,57 @@
+<div class="notifications-dropdown">
+  <div class="notifications-header">
+    <h3>Notifications</h3>
+    <button class="btn-text" 
+            (click)="marquerToutesLues()" 
+            *ngIf="notifications.length > 0 && notifications.some(n => !n.lu)"
+            [disabled]="loading">
+      Tout marquer comme lu
+    </button>
+  </div>
+
+  <div *ngIf="errorMessage" class="error-message">
+    {{ errorMessage }}
+  </div>
+
+  <div class="notifications-list" *ngIf="!loading">
+    <div class="notification-item" 
+         *ngFor="let notification of notifications" 
+         [class.non-lue]="!notification.lu"
+         [class.lue]="notification.lu"
+         (click)="marquerCommeLue(notification)">
+      <div class="notification-icon">{{ getIcone(notification.type) }}</div>
+      <div class="notification-content">
+        <h4>{{ notification.titre }}</h4>
+        <p>{{ notification.message }}</p>
+        <div class="notification-footer">
+          <span class="notification-date" *ngIf="notification.dateCreation">
+            {{ notification.dateCreation | date:'dd/MM/yyyy HH:mm' }}
+          </span>
+          <span class="notification-type">{{ notification.type }}</span>
+        </div>
+      </div>
+      <button class="btn-delete" 
+              (click)="supprimerNotification(notification, $event)"
+              [disabled]="loading">
+        🗑️
+      </button>
+    </div>
+
+    <div class="no-notifications" *ngIf="notifications.length === 0 && !errorMessage">
+      <div class="no-notifications-icon">📭</div>
+      <p>Aucune notification</p>
+      <p class="no-notifications-hint">Les nouvelles notifications apparaîtront ici</p>
+    </div>
+  </div>
+
+  <div class="loading-container" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Chargement des notifications...</p>
+  </div>
+
+  <div class="notifications-footer" *ngIf="!loading && notifications.length > 0">
+    <span class="notifications-count">
+      {{ notifications.filter(n => !n.lu).length }} non lue(s) / {{ notifications.length }} total
+    </span>
+  </div>
+</div>

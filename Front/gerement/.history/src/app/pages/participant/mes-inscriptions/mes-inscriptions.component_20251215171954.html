@@ -1,0 +1,160 @@
+<div class="mes-inscriptions">
+  <div class="container">
+    <!-- En-tête élégant -->
+    <div class="page-header">
+      <div class="header-content">
+        <div class="header-text">
+          <h1><span class="header-icon">✅</span> Mes Inscriptions</h1>
+          <p class="subtitle">Gérez et suivez tous les événements auxquels vous participez</p>
+        </div>
+        
+        <div class="header-actions">
+          <a routerLink="/participant/evenements-disponibles" class="btn btn-primary">
+            <span class="btn-icon">+</span> Découvrir d'autres événements
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Message d'erreur -->
+    <div class="error-state card" *ngIf="errorMessage && !loading">
+      <div class="error-content">
+        <div class="error-icon">⚠️</div>
+        <h3>Une erreur est survenue</h3>
+        <p>{{ errorMessage }}</p>
+        <button class="btn btn-secondary" (click)="loadInscriptions()">
+          <span class="btn-icon">🔄</span> Réessayer
+        </button>
+      </div>
+    </div>
+
+    <!-- État de chargement -->
+    <div class="loading-state" *ngIf="loading">
+      <div class="spinner"></div>
+      <p>Chargement de vos inscriptions...</p>
+    </div>
+
+    <!-- Grille d'inscriptions -->
+    <div class="inscriptions-grid" *ngIf="!loading && !errorMessage && inscriptions.length > 0">
+      <div class="inscription-card card" *ngFor="let inscription of inscriptions">
+        <!-- Section image -->
+        <div class="event-image-section">
+          <div class="event-image">
+            <img 
+              [src]="inscription.evenement ? getEventImage(inscription.evenement.type) : '/2.jpg'" 
+              [alt]="inscription.evenement?.titre || 'Événement'"
+              loading="lazy">
+          </div>
+          
+          <!-- Badge de type -->
+          <div class="event-type-badge" *ngIf="inscription.evenement">
+            <span class="badge-icon">{{ getTypeEmoji(inscription.evenement.type) }}</span>
+            {{ inscription.evenement.type }}
+          </div>
+          
+          <!-- Statut de l'événement -->
+          <div class="event-status" [class]="'status-' + getStatutColor(inscription.evenement?.statut || '')" 
+               *ngIf="inscription.evenement?.statut">
+            {{ inscription.evenement.statut }}
+          </div>
+          
+          <!-- Badge "Passé" si l'événement est terminé -->
+          <div class="passed-badge" *ngIf="inscription.evenement && isEventPassed(inscription.evenement.dateDebut)">
+            <span class="badge-icon">⏰</span> Terminé
+          </div>
+        </div>
+        
+        <!-- Contenu de l'événement -->
+        <div class="event-content">
+          <!-- En-tête -->
+          <div class="event-header">
+            <h3 class="event-title">{{ inscription.evenement?.titre || 'Événement inconnu' }}</h3>
+          </div>
+
+          <!-- Détails -->
+          <div class="event-details">
+            <div class="detail-item">
+              <span class="detail-icon">📍</span>
+              <span class="detail-text">{{ inscription.evenement?.lieu || 'Lieu non précisé' }}</span>
+            </div>
+            
+            <div class="detail-item">
+              <span class="detail-icon">📅</span>
+              <span class="detail-text">{{ getFormattedDate(inscription.evenement?.dateDebut || '') }}</span>
+            </div>
+            
+            <div class="detail-item">
+              <span class="detail-icon">👥</span>
+              <span class="detail-text">
+                {{ inscription.evenement?.nombreInscrits || 0 }}/{{ inscription.evenement?.capaciteMax || 0 }} inscrits
+              </span>
+            </div>
+            
+            <div class="detail-item" *ngIf="inscription.evenement?.description">
+              <span class="detail-icon">📝</span>
+              <span class="detail-text">{{ inscription.evenement.description | truncate:80 }}</span>
+            </div>
+          </div>
+
+          <!-- Barre de progression -->
+          <div class="event-progress" *ngIf="inscription.evenement">
+            <div class="progress-info">
+              <span class="progress-label">Taux d'inscription</span>
+              <span class="progress-percentage">{{ getProgressPercentage(inscription.evenement) }}%</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" [style.width.%]="getProgressPercentage(inscription.evenement)"></div>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="event-actions">
+            <button class="btn btn-outline" (click)="voirDetails(inscription.evenementId)" 
+                    [disabled]="!inscription.evenement">
+              <span class="btn-icon">👁️</span> Voir détails
+            </button>
+            
+            <button class="btn btn-danger" 
+                    (click)="seDesinscrire(inscription)"
+                    [disabled]="!inscription.evenement || isEventPassed(inscription.evenement.dateDebut)">
+              <span class="btn-icon">🗑️</span>
+              {{ isEventPassed(inscription.evenement?.dateDebut || '') ? 'Événement passé' : 'Se désinscrire' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- État vide -->
+    <div class="empty-state" *ngIf="!loading && !errorMessage && inscriptions.length === 0">
+      <div class="empty-content">
+        <div class="empty-icon">📭</div>
+        <h3>Aucune inscription</h3>
+        <p>Vous n'êtes inscrit à aucun événement pour le moment</p>
+        <a routerLink="/participant/evenements-disponibles" class="btn btn-primary">
+          <span class="btn-icon">🎯</span> Découvrir les événements disponibles
+        </a>
+      </div>
+    </div>
+
+    <!-- Statistiques (optionnel) -->
+    <div class="stats-footer" *ngIf="inscriptions.length > 0 && !loading">
+      <div class="stats-card">
+        <span class="stats-value">{{ inscriptions.length }}</span>
+        <span class="stats-label">inscription(s)</span>
+      </div>
+      <div class="stats-card">
+        <span class="stats-value">
+          {{ inscriptions.filter(i => i.evenement && !isEventPassed(i.evenement.dateDebut)).length }}
+        </span>
+        <span class="stats-label">à venir</span>
+      </div>
+      <div class="stats-card">
+        <span class="stats-value">
+          {{ inscriptions.filter(i => i.evenement && isEventPassed(i.evenement.dateDebut)).length }}
+        </span>
+        <span class="stats-label">terminé(s)</span>
+      </div>
+    </div>
+  </div>
+</div>

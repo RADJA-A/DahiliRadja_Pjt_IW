@@ -1,0 +1,253 @@
+/* Navbar */
+.navbar {
+  background: rgba(23, 65, 67, 0.95);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 24px rgba(23, 65, 67, 0.1);
+  border-bottom: 1px solid rgba(245, 229, 225, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.navbar-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 24px;
+  height: 70px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 30px;
+}
+
+/* Brand */
+.brand-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.brand-content:hover {
+  opacity: 0.9;
+}
+
+.brand-icon {
+  font-size: 24px;
+}
+
+.navbar-brand h2 {
+  color: #F5E5E1;
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.highlight {
+  color: #F5E5E1;
+  font-weight: 800;
+}
+
+/* Menu */
+.navbar-menu {
+  display: flex;
+  gap: 2px;
+  background: rgba(0, 0, 0, 0.1);
+  padding: 4px;
+  border-radius: 12px;
+}
+
+.menu-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(245, 229, 225, 0.8);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 14px;
+  padding: 10px 18px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.menu-link:hover {
+  color: #F5E5E1;
+  background: rgba(245, 229, 225, 0.1);
+  transform: translateY(-1px);
+}
+
+.menu-link.active {
+  color: #F5E5E1;
+  background: rgba(245, 229, 225, 0.15);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.link-icon {
+  font-size: 16px;
+  transition: transform 0.3s ease;
+}
+
+.menu-link:hover .link-icon,
+.menu-link.active .link-icon {
+  transform: scale(1.1);
+}
+
+/* Create Button */
+.create-btn {
+  background: linear-gradient(135deg, #174143, #2a5d5f);
+  color: white !important;
+  font-weight: 600;
+  margin-left: 4px;
+}
+
+.create-btn:hover {
+  background: linear-gradient(135deg, #2a5d5f, #3c6f71);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(23, 65, 67, 0.3);
+}
+
+/* Actions */
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+/* Notifications */
+.notification-container {
+  position: relative;
+  cursor: pointer;
+}
+
+.notification-icon {
+  font-size: 22px;
+  padding: 8px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.notification-icon:hover {
+  background: rgba(245, 229, 225, 0.1);
+  transform: scale(1.1);
+}
+
+.notification-icon.has-notif {
+  animation: bellRing 0.5s ease;
+}
+
+@keyframes bellRing {
+  0%, 100% { transform: rotate(0); }
+  25% { transform: rotate(15deg); }
+  75% { transform: rotate(-15deg); }
+}
+
+.notification-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: #ff4757;
+  color: white;
+  border-radius: 50%;
+  min-width: 18px;
+  height: 18px;
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #174143;
+}
+
+/* User */
+.user-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #F5E5E1, #e8d4cf);
+  color: #174143;
+  font-weight: 700;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-name {
+  color: #F5E5E1;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.user-role {
+  color: rgba(245, 229, 225, 0.6);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Logout Button */
+.logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(245, 229, 225, 0.1);
+  color: #F5E5E1;
+  border: 1px solid rgba(245, 229, 225, 0.2);
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.logout-btn:hover {
+  background: rgba(245, 229, 225, 0.2);
+  transform: translateX(4px);
+}
+
+.logout-icon {
+  font-size: 14px;
+  transition: transform 0.3s ease;
+}
+
+.logout-btn:hover .logout-icon {
+  transform: translateX(2px);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .navbar-container {
+    padding: 0 16px;
+    gap: 20px;
+  }
+  
+  .menu-link span:not(.link-icon) {
+    display: none;
+  }
+  
+  .menu-link {
+    padding: 10px;
+  }
+  
+  .user-name {
+    display: none;
+  }
+  
+  .user-role {
+    display: none;
+  }
+}

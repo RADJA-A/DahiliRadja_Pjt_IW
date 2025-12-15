@@ -1,0 +1,35 @@
+#procedure {
+    padding: 100px 20px; /* plus d'espace en haut et en bas */
+    background-color: #ffffff; /* fond blanc */
+    min-height: 400px; /* assure que la section soit au moins haute */
+}
+
+#procedure h2 {
+    text-align: center;
+    font-size: 40px;
+    margin-bottom: 40px;
+}
+
+.steps {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+.step {
+    background-color: #f0f0f0;
+    padding: 20px;
+    width: 250px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+}
+
+.step h3 {
+    margin-top: 0;
+    color: #2c3e50;
+}
+
+.step p {
+    font-size: 16px;
+}

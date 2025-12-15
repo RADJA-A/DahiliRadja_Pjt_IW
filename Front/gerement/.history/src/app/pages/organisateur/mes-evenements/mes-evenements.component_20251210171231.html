@@ -1,0 +1,81 @@
+<div class="mes-evenements">
+  <div class="container">
+    <div class="page-header">
+      <h1>Mes Événements</h1>
+      <a routerLink="/organisateur/creer-evenement" class="btn btn-primary">+ Créer un événement</a>
+    </div>
+
+    <!-- Filtres -->
+    <div class="filters card">
+      <div class="input-group">
+        <input 
+          type="text" 
+          [(ngModel)]="searchTerm" 
+          placeholder="🔍 Rechercher par titre ou lieu..."
+          class="search-input">
+      </div>
+
+ 
+    </div>
+
+    <!-- Liste des événements -->
+    <div class="loading-message" *ngIf="loading">
+      Chargement de vos événements...
+    </div>
+
+    <div class="events-grid grid grid-2" *ngIf="!loading">
+      <div class="event-card card" *ngFor="let event of evenementsFiltres">
+        <div class="event-image" *ngIf="event.imageUrl">
+          <img [src]="event.imageUrl" [alt]="event.titre">
+        </div>
+        <div class="event-placeholder" *ngIf="!event.imageUrl">
+          🎭
+        </div>
+
+        <div class="event-content">
+          <div class="event-header">
+            <h3>{{ event.titre }}</h3>
+            <span class="badge badge-{{ getStatutColor(event.statut!) }}">
+              {{ event.statut }}
+            </span>
+          </div>
+
+          <div class="event-info">
+            <p><strong>Type:</strong> {{ event.type }}</p>
+            <p><strong>📍</strong> {{ event.lieu }}</p>
+            <p><strong>📅</strong> {{ event.dateDebut | date:'dd/MM/yyyy HH:mm' }}</p>
+            <p><strong>👥</strong> {{ event.nombreInscrits }} / {{ event.capaciteMax }} participants</p>
+            <p><strong>📌</strong> {{ event.placesDisponibles }} places restantes</p>
+          </div>
+
+          <div class="event-progress">
+            <div class="progress-bar">
+              <div class="progress-fill" 
+                   [style.width.%]="(event.nombreInscrits! / event.capaciteMax) * 100">
+              </div>
+            </div>
+          </div>
+
+          <div class="event-actions">
+            <button class="btn btn-secondary" (click)="voirParticipants(event.id!)">
+              👥 Participants
+            </button>
+            <button class="btn btn-primary" (click)="modifierEvenement(event.id!)">
+              ✏️ Modifier
+            </button>
+            <button class="btn btn-danger" (click)="supprimerEvenement(event)">
+              🗑️ Supprimer
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="no-events" *ngIf="evenementsFiltres.length === 0">
+        <p *ngIf="evenements.length === 0">Vous n'avez pas encore créé d'événements</p>
+        <p *ngIf="evenements.length > 0 && evenementsFiltres.length === 0">
+          Aucun événement ne correspond à votre recherche
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,110 @@
+/* Ajoutez ces styles à votre fichier CSS existant */
+
+/* Badge de type d'événement */
+.event-type-badge {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  padding: 6px 12px;
+  background: rgba(23, 65, 67, 0.9);
+  color: white;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  backdrop-filter: blur(4px);
+}
+
+/* Styles spécifiques pour les différents statuts */
+.status-info { 
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  color: white;
+}
+
+.status-success { 
+  background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+  color: white;
+}
+
+.status-secondary { 
+  background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+  color: white;
+}
+
+.status-danger { 
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+}
+
+/* Amélioration de l'image */
+.event-image {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+}
+
+.event-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.event-card:hover .event-image img {
+  transform: scale(1.1);
+}
+
+/* Boutons améliorés */
+.btn-outline {
+  background: white;
+  color: #174143;
+  border: 2px solid #174143;
+  transition: all 0.3s ease;
+}
+
+.btn-outline:hover {
+  background: #174143;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(23, 65, 67, 0.2);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #174143 0%, #2a6c6e 100%);
+  color: white;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(23, 65, 67, 0.3);
+  background: linear-gradient(135deg, #2a6c6e 0%, #174143 100%);
+}
+
+.btn-danger {
+  background: white;
+  color: #ef4444;
+  border: 2px solid #ef4444;
+  transition: all 0.3s ease;
+}
+
+.btn-danger:hover {
+  background: #ef4444;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .event-type-badge {
+    font-size: 10px;
+    padding: 4px 8px;
+  }
+  
+  .event-image {
+    height: 160px;
+  }
+}

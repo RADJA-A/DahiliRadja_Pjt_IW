@@ -1,0 +1,69 @@
+<div class="mes-inscriptions">
+  <div class="container">
+    <div class="page-header">
+      <div>
+        <h1>✅ Mes Inscriptions</h1>
+        <p>Gérez vos inscriptions aux événements</p>
+      </div>
+      <a routerLink="/participant/evenements" class="btn btn-primary">
+        + Découvrir d'autres événements
+      </a>
+    </div>
+
+    <div class="loading-message" *ngIf="loading">
+      Chargement de vos inscriptions...
+    </div>
+
+    <div class="inscriptions-grid grid grid-2" *ngIf="!loading">
+      <div class="inscription-card card" *ngFor="let inscription of inscriptions">
+        <!-- Image ou placeholder -->
+        <div *ngIf="inscription.evenement?.imageUrl" class="event-image">
+          <img [src]="inscription.evenement!.imageUrl" [alt]="inscription.evenement!.titre">
+        </div>
+        <div *ngIf="!inscription.evenement?.imageUrl" class="event-placeholder">
+          🎯
+        </div>
+
+        <!-- Contenu uniquement si l'événement existe -->
+        <div class="event-content" *ngIf="inscription.evenement">
+          <div class="event-header">
+            <h3>{{ inscription.evenement.titre }}</h3>
+            <span class="badge badge-{{ getStatutColor(inscription.evenement.statut!) }}">
+              {{ inscription.evenement.statut }}
+            </span>
+          </div>
+
+          <div class="event-details">
+            <p><strong>Type:</strong> {{ inscription.evenement.type }}</p>
+            <p><strong>📍</strong> {{ inscription.evenement.lieu }}</p>
+            <p><strong>📅</strong> {{ inscription.evenement.dateDebut | date:'dd/MM/yyyy HH:mm' }}</p>
+            <p><strong>✅ Inscrit le:</strong> {{ inscription.dateInscription | date:'dd/MM/yyyy' }}</p>
+          </div>
+
+          <div class="event-actions">
+            <button class="btn btn-secondary" (click)="voirDetails(inscription.evenementId)">
+              📄 Voir détails
+            </button>
+            <button 
+              class="btn btn-danger" 
+              (click)="seDesinscrire(inscription)"
+              [disabled]="isEventPassed(inscription.evenement.dateDebut)">
+              {{ isEventPassed(inscription.evenement.dateDebut) ? '❌ Événement passé' : '🗑️ Se désinscrire' }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="no-inscriptions" *ngIf="inscriptions.length === 0">
+        <div class="empty-state">
+          <span class="empty-icon">📭</span>
+          <h3>Aucune inscription</h3>
+          <p>Vous n'êtes inscrit à aucun événement pour le moment</p>
+          <a routerLink="/participant/evenements" class="btn btn-primary">
+            Découvrir les événements disponibles
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

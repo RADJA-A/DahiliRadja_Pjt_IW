@@ -1,0 +1,81 @@
+<div class="dashboard">
+  <div class="container">
+    <div class="dashboard-header">
+      <h1>👋 Bienvenue, {{ user?.prenom }} !</h1>
+      <p>Voici un aperçu de vos événements</p>
+    </div>
+
+    <!-- Statistiques -->
+    <div class="stats-grid grid grid-3">
+      <div class="stat-card card">
+        <div class="stat-icon">📊</div>
+        <div class="stat-info">
+          <h3>{{ statistiques.totalEvenements || 0 }}</h3>
+          <p>Total événements</p>
+        </div>
+      </div>
+
+      <div class="stat-card card">
+        <div class="stat-icon">📅</div>
+        <div class="stat-info">
+          <h3>{{ statistiques.evenementsAVenir || 0 }}</h3>
+          <p>À venir</p>
+        </div>
+      </div>
+
+      <div class="stat-card card">
+        <div class="stat-icon">✅</div>
+        <div class="stat-info">
+          <h3>{{ statistiques.evenementsTermines || 0 }}</h3>
+          <p>Terminés</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mes événements récents -->
+    <div class="recent-events">
+      <div class="section-header">
+        <h2>Mes événements récents</h2>
+        <a routerLink="/organisateur/creer-evenement" class="btn btn-primary">+ Créer un événement</a>
+      </div>
+
+      <div class="loading-message" *ngIf="loading">
+        Chargement...
+      </div>
+
+      <div class="events-grid grid grid-2" *ngIf="!loading">
+        <div class="event-card card" *ngFor="let event of evenements.slice(0, 4)">
+          <div class="event-header">
+            <h3>{{ event.titre }}</h3>
+            <span class="badge badge-{{ getStatutColor(event.statut!) }}">
+              {{ event.statut }}
+            </span>
+          </div>
+          
+          <div class="event-details">
+            <p><strong>📍</strong> {{ event.lieu }}</p>
+            <p><strong>📅</strong> {{ event.dateDebut | date:'short' }}</p>
+            <p><strong>👥</strong> {{ event.nombreInscrits }} / {{ event.capaciteMax }} participants</p>
+          </div>
+
+          <div class="event-actions">
+            <a [routerLink]="['/organisateur/participants', event.id]" class="btn btn-secondary">
+              Voir participants
+            </a>
+          </div>
+        </div>
+
+        <div class="no-events" *ngIf="evenements.length === 0">
+          <p>Vous n'avez pas encore créé d'événements</p>
+          <a routerLink="/organisateur/creer-evenement" class="btn btn-primary">Créer mon premier événement</a>
+        </div>
+      </div>
+
+      <div class="view-all" *ngIf="evenements.length > 4">
+        <a routerLink="/organisateur/mes-evenements" class="btn btn-secondary">
+          Voir tous mes événements →
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,105 @@
+<div class="creer-evenement">
+  <div class="container">
+    <div class="page-header">
+      <h1>✨ Créer un Événement</h1>
+      <a routerLink="/organisateur/mes-evenements" class="btn btn-secondary">← Retour</a>
+    </div>
+
+    <form (ngSubmit)="onSubmit()" class="evenement-form card">
+      <div class="form-grid">
+        <!-- Titre -->
+        <div class="input-group full-width">
+          <label>Titre de l'événement *</label>
+          <input 
+            type="text" 
+            [(ngModel)]="evenement.titre" 
+            name="titre"
+            placeholder="Ex: Conférence sur l'Intelligence Artificielle"
+            required>
+        </div>
+
+        <!-- Type -->
+        <div class="input-group">
+          <label>Type d'événement *</label>
+          <select [(ngModel)]="evenement.type" name="type" required>
+            <option *ngFor="let type of types" [value]="type">
+              {{ type.replace('_', ' ') }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Lieu -->
+        <div class="input-group">
+          <label>Lieu *</label>
+          <input 
+            type="text" 
+            [(ngModel)]="evenement.lieu" 
+            name="lieu"
+            placeholder="Ex: Université M'Sila - Amphi A"
+            required>
+        </div>
+
+        <!-- Date début -->
+        <div class="input-group">
+          <label>Date de début *</label>
+          <input 
+            type="datetime-local" 
+            [(ngModel)]="evenement.dateDebut" 
+            name="dateDebut"
+            required>
+        </div>
+
+        <!-- Date fin -->
+        <div class="input-group">
+          <label>Date de fin *</label>
+          <input 
+            type="datetime-local" 
+            [(ngModel)]="evenement.dateFin" 
+            name="dateFin"
+            required>
+        </div>
+
+        <!-- Capacité -->
+        <div class="input-group">
+          <label>Capacité maximale *</label>
+          <input 
+            type="number" 
+            [(ngModel)]="evenement.capaciteMax" 
+            name="capaciteMax"
+            min="1"
+            placeholder="50"
+            required>
+        </div>
+
+        <!-- Image URL -->
+        <div class="input-group full-width">
+          <label>URL de l'image (optionnel)</label>
+          <input 
+            type="url" 
+            [(ngModel)]="evenement.imageUrl" 
+            name="imageUrl"
+            placeholder="https://example.com/image.jpg">
+        </div>
+
+        <!-- Programme -->
+        <div class="input-group full-width">
+          <label>Programme / Description (optionnel)</label>
+          <textarea 
+            [(ngModel)]="evenement.programme" 
+            name="programme"
+            rows="5"
+            placeholder="Décrivez le programme de votre événement..."></textarea>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" routerLink="/organisateur/mes-evenements">
+          Annuler
+        </button>
+        <button type="submit" class="btn btn-primary" [disabled]="loading">
+          {{ loading ? 'Création en cours...' : '✨ Créer l\'événement' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
