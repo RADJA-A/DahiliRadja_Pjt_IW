@@ -1,0 +1,132 @@
+<div class="mes-inscriptions">
+  <div class="container">
+    <!-- En-tête -->
+    <div class="page-header">
+      <div class="header-content">
+        <div class="header-text">
+          <h1><span class="header-icon">✅</span> Mes Inscriptions</h1>
+          <p class="subtitle">Tous les événements auxquels vous êtes inscrit</p>
+        </div>
+        
+        <div class="header-actions">
+          <a routerLink="/participant/evenements-disponibles" class="btn btn-primary">
+            <span class="btn-icon">+</span> Voir plus d'événements
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Message d'erreur -->
+    <div class="error-state card" *ngIf="errorMessage && !loading">
+      <div class="error-content">
+        <div class="error-icon">⚠️</div>
+        <p>{{ errorMessage }}</p>
+        <button class="btn btn-secondary" (click)="loadInscriptions()">
+          <span class="btn-icon">🔄</span> Réessayer
+        </button>
+      </div>
+    </div>
+
+    <!-- État de chargement -->
+    <div class="loading-state" *ngIf="loading">
+      <div class="spinner"></div>
+      <p>Chargement de vos inscriptions...</p>
+    </div>
+
+    <!-- Grille d'inscriptions -->
+    <div class="inscriptions-grid" *ngIf="!loading && !errorMessage && inscriptions.length > 0">
+      <div class="inscription-card card" *ngFor="let inscription of inscriptions">
+        <!-- Section image avec le type -->
+        <div class="event-image-section">
+          <div class="event-image">
+            <img 
+              [src]="getEventImage(inscription.evenementType)" 
+              [alt]="getEventTitle(inscription)"
+              loading="lazy">
+          </div>
+          
+          <!-- Badge de type d'événement -->
+          <div class="event-type-badge">
+            <span class="badge-icon">{{ getTypeEmoji(inscription.evenementType) }}</span>
+            {{ formatEventType(inscription.evenementType) }}
+          </div>
+          
+          <!-- Badge "Passé" si l'événement est terminé -->
+          <div class="passed-badge" *ngIf="isEventPassed(inscription.evenementDateDebut)">
+            <span class="badge-icon">⏰</span> Terminé
+          </div>
+        </div>
+        
+        <!-- Contenu de l'événement -->
+        <div class="event-content">
+          <!-- Titre de l'événement -->
+          <div class="event-header">
+            <h3 class="event-title">{{ getEventTitle(inscription) }}</h3>
+          </div>
+
+          <!-- Détails de l'événement (UNIQUEMENT les infos essentielles) -->
+          <div class="event-details">
+            <div class="detail-item">
+              <span class="detail-icon">📍</span>
+              <span class="detail-text">{{ getEventLocation(inscription) }}</span>
+            </div>
+            
+            <div class="detail-item">
+              <span class="detail-icon">📅</span>
+              <span class="detail-text">{{ getFormattedDate(inscription.evenementDateDebut) }}</span>
+            </div>
+            
+            <div class="detail-item">
+              <span class="detail-icon">🆔</span>
+              <span class="detail-text">
+                Événement #{{ inscription.evenementId }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="event-actions">
+            <button class="btn btn-outline" (click)="voirDetails(inscription.evenementId)">
+              <span class="btn-icon">👁️</span> Voir l'événement
+            </button>
+            
+            <button class="btn btn-danger" 
+                    (click)="seDesinscrire(inscription)"
+                    [disabled]="isEventPassed(inscription.evenementDateDebut)">
+              <span class="btn-icon">🗑️</span>
+              {{ isEventPassed(inscription.evenementDateDebut) ? 'Événement passé' : 'Se désinscrire' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- État vide -->
+    <div class="empty-state" *ngIf="!loading && !errorMessage && inscriptions.length === 0">
+      <div class="empty-content">
+        <div class="empty-icon">📭</div>
+        <h3>Aucune inscription</h3>
+        <p>Vous n'êtes inscrit à aucun événement pour le moment</p>
+        <a routerLink="/participant/evenements-disponibles" class="btn btn-primary">
+          <span class="btn-icon">🎯</span> Découvrir les événements disponibles
+        </a>
+      </div>
+    </div>
+
+    <!-- Statistiques simplifiées -->
+    <div class="stats-footer" *ngIf="inscriptions.length > 0 && !loading">
+      <div class="stats-card">
+        <span class="stats-value">{{ getTotalInscriptions() }}</span>
+        <span class="stats-label">total</span>
+      </div>
+      <div class="stats-card">
+        <span class="stats-value">{{ getUpcomingInscriptions() }}</span>
+        <span class="stats-label">à venir</span>
+      </div>
+      <div class="stats-card">
+        <span class="stats-value">{{ getPastInscriptions() }}</span>
+        <span class="stats-label">terminés</span>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,105 @@
+.navbar {
+  background: rgba(23, 65, 67, 0.95);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 24px rgba(23, 65, 67, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.navbar-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 16px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar-brand h2 {
+  color: #F5E5E1;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.navbar-menu {
+  display: flex;
+  gap: 32px;
+}
+
+.navbar-menu a {
+  color: #F5E5E1;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.navbar-menu a:hover,
+.navbar-menu a.active {
+  background: rgba(245, 229, 225, 0.1);
+  color: white;
+}
+
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.notification-btn {
+  position: relative;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: background 0.3s ease;
+}
+
+.notification-btn:hover {
+  background: rgba(245, 229, 225, 0.1);
+}
+
+.notification-btn .icon {
+  font-size: 24px;
+}
+
+.badge-notif {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: #dc3545;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.user-menu {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: #F5E5E1;
+}
+
+button{
+    border: none;
+    border-radius: 50px;
+     background-color:  #174143; 
+    color: white;
+    height : 38px;
+    width : 104px;
+    font-size: 13px;
+}
+
+button:hover{
+    cursor: pointer;
+    transition : 0.2s ease-in-out  ;
+    background-color:  #F5E5E1;
+    color:  #174143; 
+}

@@ -1,0 +1,255 @@
+<div class="detail-evenement">
+  <div class="container">
+    <!-- En-tête avec navigation -->
+    <div class="page-header">
+      <div class="header-content">
+        <div class="header-text">
+          <a routerLink="/participant/evenements-disponibles" class="btn-back">
+            <span class="btn-icon">←</span> Retour aux événements
+          </a>
+          <h1><span class="header-icon">🎯</span> Détails de l'événement</h1>
+        </div>
+      </div>
+    </div>
+
+    <!-- État de chargement -->
+    <div class="loading-state" *ngIf="loading">
+      <div class="spinner"></div>
+      <p>Chargement des détails de l'événement...</p>
+    </div>
+
+    <!-- Contenu principal -->
+    <div class="event-content" *ngIf="!loading && evenement">
+      <!-- Image de couverture -->
+      <div class="event-cover-section">
+        <div class="event-cover">
+          <img 
+            [src]="getEventImage(evenement.type)" 
+            [alt]="evenement.titre"
+            loading="lazy">
+          <div class="cover-overlay">
+            <div class="event-badges">
+              <span class="event-type-badge">
+                <span class="badge-icon">{{ getTypeEmoji(evenement.type) }}</span>
+                {{ formatEventType(evenement.type) }}
+              </span>
+              <span class="event-status" [class]="'status-' + getStatutColor(evenement.statut || '')">
+                {{ getStatutLabel(evenement.statut || '') }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Grille de contenu -->
+      <div class="content-grid">
+        <!-- Colonne principale -->
+        <div class="main-content">
+          <!-- Titre et informations -->
+          <div class="event-header card">
+            <h1 class="event-title">{{ evenement.titre }}</h1>
+            
+            <div class="event-meta">
+              <div class="meta-item">
+                <span class="meta-icon">🎯</span>
+                <span class="meta-text">{{ formatEventType(evenement.type) }}</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-icon">👤</span>
+                <span class="meta-text">Organisateur #{{ evenement.organisateurId }}</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-icon">⏱️</span>
+                <span class="meta-text">{{ getDuration() }}</span>
+              </div>
+            </div>
+          </div>
+
+         
+
+          <!-- Programme -->
+          <div class="section card" *ngIf="evenement.programme">
+            <div class="section-header">
+              <h2><span class="section-icon">📋</span> Programme</h2>
+            </div>
+            <div class="section-content">
+              <pre class="programme-text">{{ evenement.programme }}</pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+          <!-- Carte informations -->
+          <div class="info-card card">
+            <div class="card-header">
+              <h3><span class="card-icon">ℹ️</span> Informations</h3>
+            </div>
+
+            <div class="card-content">
+              <!-- Lieu -->
+              <div class="info-item">
+                <div class="info-icon">📍</div>
+                <div class="info-details">
+                  <h4>Lieu</h4>
+                  <p>{{ evenement.lieu || 'Non spécifié' }}</p>
+                </div>
+              </div>
+
+              <!-- Date et heure -->
+              <div class="info-item">
+                <div class="info-icon">📅</div>
+                <div class="info-details">
+                  <h4>Date et heure</h4>
+                  <p class="date-info">
+                    <span class="date">{{ getFormattedDate(evenement.dateDebut) }}</span>
+                    <span class="time">{{ getFormattedTime(evenement.dateDebut) }}</span>
+                  </p>
+                </div>
+              </div>
+
+              <!-- Date de fin -->
+              <div class="info-item" *ngIf="evenement.dateFin">
+                <div class="info-icon">🕐</div>
+                <div class="info-details">
+                  <h4>Fin prévue</h4>
+                  <p>{{ getFormattedDate(evenement.dateFin) }} à {{ getFormattedTime(evenement.dateFin) }}</p>
+                </div>
+              </div>
+
+              <div class="divider"></div>
+
+              <!-- Statistiques participants -->
+              <div class="participants-section">
+                <h4 class="section-title">
+                  <span class="section-icon">👥</span> Participants
+                </h4>
+                
+                <div class="participants-stats">
+                  <div class="stat-card">
+                    <span class="stat-value">{{ evenement.nombreInscrits || 0 }}</span>
+                    <span class="stat-label">Inscrits</span>
+                  </div>
+                  
+                  <div class="stat-card">
+                    <span class="stat-value">{{ getPlacesRestantes() }}</span>
+                    <span class="stat-label">Places restantes</span>
+                  </div>
+                  
+                  <div class="stat-card">
+                    <span class="stat-value">{{ evenement.capaciteMax }}</span>
+                    <span class="stat-label">Capacité max</span>
+                  </div>
+                </div>
+
+                <!-- Barre de progression -->
+                <div class="progress-section">
+                  <div class="progress-header">
+                    <span class="progress-label">Taux d'inscription</span>
+                    <span class="progress-percentage">{{ getProgressPercentage() }}%</span>
+                  </div>
+                  <div class="progress-bar">
+                    <div class="progress-fill" [style.width.%]="getProgressPercentage()"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="divider"></div>
+
+              <!-- Actions -->
+              <div class="actions-section">
+                <button 
+                  *ngIf="!isInscrit && evenement.statut === 'AVENIR' && getPlacesRestantes() > 0"
+                  class="btn btn-primary btn-block" 
+                  (click)="sinscrire()">
+                  <span class="btn-icon">✅</span>
+                  S'inscrire maintenant
+                </button>
+
+                <button 
+                  *ngIf="isInscrit"
+                  class="btn btn-success btn-block"
+                  disabled>
+                  <span class="btn-icon">✓</span>
+                  Vous êtes inscrit
+                </button>
+
+                <button 
+                  *ngIf="isInscrit && evenement.statut === 'AVENIR'"
+                  class="btn btn-outline btn-block" 
+                  (click)="seDesinscrire()">
+                  <span class="btn-icon">🗑️</span>
+                  Se désinscrire
+                </button>
+
+                <button 
+                  *ngIf="evenement.statut === 'COMPLET'"
+                  class="btn btn-warning btn-block"
+                  disabled>
+                  <span class="btn-icon">❌</span>
+                  Événement complet
+                </button>
+
+                <button 
+                  *ngIf="evenement.statut === 'ANNULE'"
+                  class="btn btn-danger btn-block"
+                  disabled>
+                  <span class="btn-icon">🚫</span>
+                  Événement annulé
+                </button>
+
+                <button 
+                  *ngIf="evenement.statut === 'TERMINE'"
+                  class="btn btn-secondary btn-block"
+                  disabled>
+                  <span class="btn-icon">⏰</span>
+                  Événement terminé
+                </button>
+
+                <div class="action-hint" *ngIf="!isInscrit && getPlacesRestantes() > 0 && evenement.statut === 'AVENIR'">
+                  <span class="hint-icon">💡</span>
+                  <span class="hint-text">{{ getPlacesRestantes() }} places disponibles</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Carte dates importantes -->
+          <div class="dates-card card" *ngIf="evenement.dateDebut">
+            <div class="card-header">
+              <h3><span class="card-icon">⏳</span> Dates importantes</h3>
+            </div>
+            <div class="card-content">
+              <div class="date-item">
+                <div class="date-icon">📅</div>
+                <div>
+                  <strong>Début</strong>
+                  <p>{{ getFormattedDate(evenement.dateDebut) }}</p>
+                </div>
+              </div>
+              <div class="date-item" *ngIf="evenement.dateFin">
+                <div class="date-icon">🕐</div>
+                <div>
+                  <strong>Fin</strong>
+                  <p>{{ getFormattedDate(evenement.dateFin) }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- État non trouvé -->
+    <div class="not-found-state" *ngIf="!loading && !evenement">
+      <div class="not-found-content">
+        <div class="not-found-icon">🔍</div>
+        <h2>Événement non trouvé</h2>
+        <p>L'événement que vous recherchez n'existe pas ou a été supprimé.</p>
+        <a routerLink="/participant/evenements-disponibles" class="btn btn-primary">
+          <span class="btn-icon">🎯</span> Voir les événements disponibles
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

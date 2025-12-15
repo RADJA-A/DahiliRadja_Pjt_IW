@@ -1,0 +1,38 @@
+<div class="center-wrapper">
+  <form class="login-container" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    <h2>Connexion</h2>
+    
+    <div *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
+    </div>
+
+    <label for="email">Email</label>
+    <input 
+      type="email" 
+      id="email" 
+      formControlName="email"
+      placeholder="votre@email.com" 
+    />
+    
+    <label for="password">Mot de passe</label>
+    <input 
+      type="password" 
+      id="password" 
+      formControlName="password"
+      placeholder="Votre mot de passe" 
+    />
+    
+    <button type="submit" [disabled]="loginForm.invalid || isLoading">
+      {{ isLoading ? 'Connexion...' : 'Se connecter' }}
+    </button>
+    
+    <!-- Bouton de test -->
+    <button type="button" (click)="testResponseStructure()" class="btn-test">
+      🧪 Tester structure réponse
+    </button>
+    
+    <p class="signup-link">
+      Pas de compte? <a routerLink="/signin">S'inscrire</a>
+    </p>
+  </form>
+</div>

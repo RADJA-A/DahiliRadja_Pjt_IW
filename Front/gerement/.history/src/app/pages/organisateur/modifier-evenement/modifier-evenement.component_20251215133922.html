@@ -1,0 +1,33 @@
+<!-- Section pour modifier le statut -->
+<div class="form-section" *ngIf="evenement.statut !== 'TERMINE' && evenement.statut !== 'ANNULE'">
+  <div class="section-header">
+    <span class="section-icon">⚙️</span>
+    <h3>Changer le statut</h3>
+  </div>
+  
+  <div class="status-change-container">
+    <div class="status-options">
+      <div class="status-option">
+        <button type="button" class="btn btn-warning" (click)="annulerEvenement()" 
+                *ngIf="evenement.statut !== 'ANNULE'">
+          <span class="btn-icon">✕</span>
+          Annuler l'événement
+        </button>
+        <p class="option-hint">Marquer l'événement comme annulé (irréversible)</p>
+      </div>
+      
+      <div class="status-option" *ngIf="checkIfEventShouldBeTerminated()">
+        <button type="button" class="btn btn-info" (click)="terminerEvenement()">
+          <span class="btn-icon">✓</span>
+          Marquer comme terminé
+        </button>
+        <p class="option-hint">La date de fin est dépassée</p>
+      </div>
+    </div>
+    
+    <div class="status-warning" *ngIf="checkIfEventShouldBeTerminated()">
+      <span class="warning-icon">⚠️</span>
+      <span class="warning-text">La date de fin de cet événement est dépassée. Pensez à le marquer comme terminé.</span>
+    </div>
+  </div>
+</div>

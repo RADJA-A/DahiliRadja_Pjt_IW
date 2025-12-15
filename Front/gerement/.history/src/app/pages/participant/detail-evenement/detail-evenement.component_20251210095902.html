@@ -1,0 +1,139 @@
+<div class="detail-evenement" *ngIf="!loading && evenement">
+  <div class="container">
+    <!-- Bouton retour -->
+    <div class="back-button">
+      <a routerLink="/participant/evenements" class="btn btn-secondary">← Retour aux événements</a>
+    </div>
+
+    <!-- Image de couverture -->
+    <div class="event-cover" *ngIf="evenement.imageUrl">
+      <img [src]="evenement.imageUrl" [alt]="evenement.titre">
+    </div>
+    <div class="event-cover-placeholder" *ngIf="!evenement.imageUrl">
+      🎯
+    </div>
+
+    <!-- Contenu principal -->
+    <div class="content-grid">
+      <!-- Colonne principale -->
+      <div class="main-content">
+        <div class="card">
+          <div class="event-header">
+            <h1>{{ evenement.titre }}</h1>
+            <span class="badge badge-{{ getStatutColor(evenement.statut!) }}">
+              {{ evenement.statut }}
+            </span>
+          </div>
+
+          <div class="event-meta">
+            <span class="meta-item">
+              <strong>Type:</strong> {{ evenement.type }}
+            </span>
+            <span class="meta-item">
+              <strong>Organisateur:</strong> Organisateur #{{ evenement.organisateurId }}
+            </span>
+          </div>
+
+          <div class="section" *ngIf="evenement.programme">
+            <h2>📋 Programme</h2>
+            <p class="programme-text">{{ evenement.programme }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <!-- Informations -->
+        <div class="card info-card">
+          <h3>Informations</h3>
+          
+          <div class="info-item">
+            <span class="icon">📍</span>
+            <div>
+              <strong>Lieu</strong>
+              <p>{{ evenement.lieu }}</p>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <span class="icon">📅</span>
+            <div>
+              <strong>Date de début</strong>
+              <p>{{ evenement.dateDebut | date:'full' }}</p>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <span class="icon">🕐</span>
+            <div>
+              <strong>Heure de début</strong>
+              <p>{{ evenement.dateDebut | date:'HH:mm' }}</p>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <span class="icon">⏱️</span>
+            <div>
+              <strong>Date de fin</strong>
+              <p>{{ evenement.dateFin | date:'full' }}</p>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="participants-info">
+            <h4>👥 Participants</h4>
+            <div class="participants-stats">
+              <div class="stat">
+                <span class="stat-value">{{ evenement.nombreInscrits }}</span>
+                <span class="stat-label">Inscrits</span>
+              </div>
+              <div class="stat">
+                <span class="stat-value">{{ evenement.placesDisponibles }}</span>
+                <span class="stat-label">Places restantes</span>
+              </div>
+            </div>
+
+            <div class="progress-bar">
+              <div class="progress-fill" 
+                   [style.width.%]="(evenement.nombreInscrits! / evenement.capaciteMax) * 100">
+              </div>
+            </div>
+            <p class="progress-text">
+              {{ evenement.nombreInscrits }} / {{ evenement.capaciteMax }} places
+            </p>
+          </div>
+
+          <div class="divider"></div>
+
+          <!-- Bouton d'inscription -->
+          <button 
+            *ngIf="!isInscrit && evenement.statut !== 'COMPLET' && evenement.statut !== 'ANNULE'"
+            class="btn btn-primary btn-block" 
+            (click)="sinscrire()">
+            ✅ S'inscrire maintenant
+          </button>
+
+          <button 
+            *ngIf="isInscrit"
+            class="btn btn-success btn-block"
+            disabled>
+            ✅ Vous êtes inscrit
+          </button>
+
+
+          <button 
+            *ngIf="evenement.statut === 'ANNULE'"
+            class="btn btn-danger btn-block"
+            disabled>
+            🚫 Événement annulé
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="loading-container" *ngIf="loading">
+  <div class="loading-message">Chargement des détails...</div>
+</div>

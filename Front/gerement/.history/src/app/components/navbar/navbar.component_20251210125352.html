@@ -1,0 +1,38 @@
+<nav class="navbar">
+  <div class="navbar-container">
+    <div class="navbar-brand">
+      <h2>EventManager</h2>
+    </div>
+
+    <div class="navbar-menu">
+      <ng-container *ngIf="!isOrganisateur()">
+        <!-- Add routerLink directive -->
+        <a [routerLink]="['/organisateur/dashboard']" routerLinkActive="active">Dashboard</a>
+        <a [routerLink]="['/organisateur/mes-evenements']" routerLinkActive="active">Mes Événements</a>
+        <a [routerLink]="['/organisateur/creer-evenement']" routerLinkActive="active">Créer</a>
+      </ng-container>
+
+      <ng-container *ngIf="!isParticipant()">
+        <!-- Add routerLink directive -->
+        <a [routerLink]="['/participant/evenements']" routerLinkActive="active">Événements</a>
+        <a [routerLink]="['/participant/mes-inscriptions']" routerLinkActive="active">Mes Inscriptions</a>
+
+      </ng-container>
+    </div>
+
+    <div class="navbar-actions">
+      <div class="notification-btn" (click)="toggleNotifications()">
+        <span class="icon">🔔</span>
+        <span class="badge-notif" *ngIf="notificationsCount > 0">{{ notificationsCount }}</span>
+      </div>
+
+      <div class="user-menu">
+        <span>{{ user?.prenom }} {{ user?.nom }}</span>
+        <button class="btn btn-secondary" (click)="logout()">Déconnexion</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dropdown notifications -->
+  <app-notifications *ngIf="showNotifications" [userId]="user?.id"></app-notifications>
+</nav>

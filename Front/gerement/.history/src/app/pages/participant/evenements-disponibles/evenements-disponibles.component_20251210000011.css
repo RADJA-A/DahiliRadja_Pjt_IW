@@ -1,0 +1,160 @@
+.evenements-disponibles {
+  min-height: calc(100vh - 80px);
+  padding: 32px 0;
+}
+
+.page-header {
+  margin-bottom: 32px;
+}
+
+.page-header h1 {
+  color: #174143;
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.page-header p {
+  color: #666;
+  font-size: 16px;
+}
+
+.filters {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.results-info {
+  margin-bottom: 24px;
+  color: #666;
+  font-size: 14px;
+}
+
+.event-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.event-badge-container {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.type-badge {
+  background: rgba(23, 65, 67, 0.1);
+  color: #174143;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.event-image {
+  width: calc(100% + 48px);
+  height: 180px;
+  margin: -24px -24px 16px -24px;
+  overflow: hidden;
+  border-radius: 16px 16px 0 0;
+}
+
+.event-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.event-placeholder {
+  width: calc(100% + 48px);
+  height: 180px;
+  margin: -24px -24px 16px -24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #174143 0%, #2a6366 100%);
+  font-size: 64px;
+  border-radius: 16px 16px 0 0;
+}
+
+.event-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex: 1;
+}
+
+.event-content h3 {
+  color: #174143;
+  font-size: 18px;
+  line-height: 1.4;
+}
+
+.event-details p {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.event-progress {
+  margin: 8px 0;
+}
+
+.progress-bar {
+  height: 8px;
+  background: rgba(23, 65, 67, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #174143 0%, #2a6366 100%);
+  transition: width 0.3s ease;
+}
+
+.progress-text {
+  font-size: 12px;
+  color: #666;
+}
+
+.event-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: auto;
+}
+
+.event-actions button {
+  flex: 1;
+}
+
+.btn-success {
+  background: #28a745;
+  color: white;
+  cursor: not-allowed;
+}
+
+.no-events {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 64px 24px;
+  color: #666;
+}
+
+.loading-message {
+  text-align: center;
+  padding: 64px;
+  color: #174143;
+  font-size: 18px;
+}
+
+@media (max-width: 768px) {
+  .filters {
+    grid-template-columns: 1fr;
+  }
+}

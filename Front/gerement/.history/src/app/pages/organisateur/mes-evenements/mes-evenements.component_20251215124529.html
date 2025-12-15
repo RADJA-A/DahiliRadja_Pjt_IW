@@ -1,0 +1,135 @@
+<div class="mes-evenements">
+  <div class="container">
+    <!-- En-tête élégant -->
+    <div class="page-header">
+      <div class="header-content">
+        <div class="header-text">
+          <h1><span class="header-icon">📋</span> Mes Événements</h1>
+          <p class="subtitle">Gérez tous vos événements en un seul endroit</p>
+        </div>
+        <a routerLink="/organisateur/creer-evenement" class="btn btn-primary">
+          <span class="btn-icon">+</span> Créer un événement
+        </a>
+      </div>
+    </div>
+
+    <!-- Barre de recherche -->
+    <div class="search-bar card">
+      <div class="search-container">
+        <div class="search-icon">🔍</div>
+        <input 
+          type="text" 
+          [(ngModel)]="searchTerm" 
+          placeholder="Rechercher par titre, lieu ou type..."
+          class="search-input">
+        <div class="input-hint">
+          {{ evenementsFiltres.length }} événement(s) trouvé(s) sur {{ evenements.length }}
+        </div>
+      </div>
+    </div>
+
+    <!-- État de chargement -->
+    <div class="loading-state" *ngIf="loading">
+      <div class="spinner"></div>
+      <p>Chargement de vos événements...</p>
+    </div>
+
+    <!-- Grille d'événements -->
+    <div class="events-grid" *ngIf="!loading && evenementsFiltres.length > 0">
+      <div class="event-card card" *ngFor="let event of evenementsFiltres">
+        <!-- Image selon le type d'événement -->
+        <div class="event-image-section">
+          <div class="event-image">
+            <img [src]="getEventImage(event.type)" [alt]="event.titre">
+          </div>
+          <div class="event-status" [class]="'status-' + getStatutColor(event.statut!)">
+            {{ event.statut }}
+          </div>
+          <div class="event-type-badge">
+            {{ formatEventType(event.type) }}
+          </div>
+        </div>
+        
+        <div class="event-content">
+          <!-- En-tête de l'événement -->
+          <div class="event-header">
+            <h3 class="event-title">{{ event.titre }}</h3>
+            <div class="event-meta">
+              <span class="meta-item">
+                <span class="meta-icon">📅</span>
+                {{ event.dateDebut | date:'dd/MM/yy' }}
+              </span>
+              <span class="meta-item">
+                <span class="meta-icon">👥</span>
+                {{ event.nombreInscrits || 0 }}/{{ event.capaciteMax }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Détails de l'événement -->
+          <div class="event-details">
+            <div class="detail-item">
+              <span class="detail-icon">📍</span>
+              <span class="detail-text">{{ event.lieu }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-icon">🕐</span>
+              <span class="detail-text">{{ event.dateDebut | date:'HH:mm' }} - {{ event.dateFin | date:'HH:mm' }}</span>
+            </div>
+          </div>
+
+          <!-- Barre de progression -->
+          <div class="event-progress">
+            <div class="progress-info">
+              <span class="progress-label">Inscriptions</span>
+              <span class="progress-percentage">{{ getProgressPercentage(event) }}%</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" [style.width]="getProgressPercentage(event) + '%'"></div>
+            </div>
+            <div class="progress-stats">
+              <span>{{ event.capaciteMax - (event.nombreInscrits || 0) }} places restantes</span>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="event-actions">
+            <button class="btn btn-outline" (click)="voirParticipants(event.id!)">
+              Participants
+            </button>
+            <button class="btn btn-primary" (click)="modifierEvenement(event.id!)">
+              Modifier
+            </button>
+            <button class="btn btn-danger" (click)="supprimerEvenement(event)">
+              Supprimer
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- État vide -->
+    <div class="empty-state" *ngIf="!loading && evenementsFiltres.length === 0">
+      <div class="empty-content">
+        <div class="empty-icon">📋</div>
+        <h3 *ngIf="evenements.length === 0">Aucun événement créé</h3>
+        <h3 *ngIf="evenements.length > 0 && evenementsFiltres.length === 0">
+          Aucun événement ne correspond à votre recherche
+        </h3>
+        <p *ngIf="evenements.length === 0">
+          Créez votre premier événement pour commencer
+        </p>
+        <p *ngIf="evenements.length > 0 && evenementsFiltres.length === 0">
+          Essayez avec d'autres termes de recherche
+        </p>
+        <a routerLink="/organisateur/creer-evenement" class="btn btn-primary" *ngIf="evenements.length === 0">
+          Créer mon premier événement
+        </a>
+        <button class="btn btn-secondary" (click)="searchTerm = ''" 
+                *ngIf="evenements.length > 0 && evenementsFiltres.length === 0">
+          Réinitialiser la recherche
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,92 @@
+<nav class="navbar">
+  <div class="navbar-container">
+    <!-- Logo/Brand -->
+    <div class="navbar-brand">
+      <div class="logo-container">
+        <div class="logo-icon">🎯</div>
+        <h2 class="logo-text">Event<span class="logo-highlight">Manager</span></h2>
+      </div>
+    </div>
+
+    <!-- Navigation Menu -->
+    <div class="navbar-menu">
+      <ng-container *ngIf="isOrganisateur()">
+        <a [routerLink]="['/organisateur/dashboard']" routerLinkActive="active" 
+           class="nav-link" data-text="Dashboard">
+          <span class="nav-icon">📊</span>
+          <span class="nav-text">Dashboard</span>
+        </a>
+        <a [routerLink]="['/organisateur/mes-evenements']" routerLinkActive="active"
+           class="nav-link" data-text="Mes Événements">
+          <span class="nav-icon">📅</span>
+          <span class="nav-text">Mes Événements</span>
+        </a>
+        <a [routerLink]="['/organisateur/creer-evenement']" routerLinkActive="active"
+           class="nav-link nav-cta" data-text="Créer">
+          <span class="nav-icon">✨</span>
+          <span class="nav-text">Créer</span>
+          <span class="pulse-effect"></span>
+        </a>
+      </ng-container>
+
+      <ng-container *ngIf="isParticipant()">
+        <a [routerLink]="['/participant/evenements']" routerLinkActive="active"
+           class="nav-link" data-text="Événements">
+          <span class="nav-icon">🎪</span>
+          <span class="nav-text">Événements</span>
+        </a>
+        <a [routerLink]="['/participant/mes-inscriptions']" routerLinkActive="active"
+           class="nav-link" data-text="Mes Inscriptions">
+          <span class="nav-icon">📋</span>
+          <span class="nav-text">Mes Inscriptions</span>
+        </a>
+      </ng-container>
+    </div>
+
+    <!-- Actions Section -->
+    <div class="navbar-actions">
+      <!-- Notifications -->
+      <div class="notification-wrapper" (click)="toggleNotifications()">
+        <div class="notification-btn" [class.has-notifications]="notificationsCount > 0">
+          <span class="notification-icon">🔔</span>
+          <span class="badge-notif" *ngIf="notificationsCount > 0">
+            {{ notificationsCount }}
+          </span>
+          <div class="ripple"></div>
+        </div>
+      </div>
+
+      <!-- User Profile -->
+      <div class="user-profile">
+        <div class="user-avatar">
+          <span class="avatar-text">{{ getUserInitials() }}</span>
+        </div>
+        <div class="user-info">
+          <span class="user-name">{{ user?.prenom }} {{ user?.nom }}</span>
+          <span class="user-role">{{ getUserRole() }}</span>
+        </div>
+        <div class="dropdown-arrow">▼</div>
+        
+        <!-- Dropdown Menu -->
+        <div class="dropdown-menu">
+          <button class="dropdown-item" (click)="goToProfile()">
+            <span class="dropdown-icon">👤</span>
+            <span>Mon Profil</span>
+          </button>
+          <button class="dropdown-item" (click)="goToSettings()">
+            <span class="dropdown-icon">⚙️</span>
+            <span>Paramètres</span>
+          </button>
+          <div class="dropdown-divider"></div>
+          <button class="dropdown-item logout-btn" (click)="logout()">
+            <span class="dropdown-icon">🚪</span>
+            <span>Déconnexion</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notifications Panel -->
+  <app-notifications *ngIf="showNotifications" [userId]="user?.id"></app-notifications>
+</nav>

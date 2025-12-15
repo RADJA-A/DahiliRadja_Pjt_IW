@@ -1,0 +1,15 @@
+.custom-footer {
+  background: #174143;
+  padding: 30px;
+  text-align: center;
+  color: #F5E5E1;
+  font-family: Arial, sans-serif;
+  border-top: 1px solid #ddd;
+}
+
+
+.footer-bottom {
+  margin-top: 15px;
+  font-size: 13px;
+  color: #d7beb8;
+}
