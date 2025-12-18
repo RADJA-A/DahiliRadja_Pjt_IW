@@ -1,0 +1,19 @@
+cd Back/gestion_notifications
+$env:MAVEN_OPTS="-Xms128m -Xmx256m"     
+.\mvnw spring-boot:run                                        
+
+cd Back/gestion-evenements
+$env:MAVEN_OPTS="-Xms128m -Xmx256m"                                           
+.\mvnw spring-boot:run  
+
+
+cd Back/gestion-inscriptione
+$env:MAVEN_OPTS="-Xms128m -Xmx256m"                                           
+.\mvnw spring-boot:run  
+
+cd Back/gestion-utilisateurs
+$env:MAVEN_OPTS="-Xms128m -Xmx256m"                                           
+.\mvnw spring-boot:run  
+
+cd Front/gerement
+ng serve --open                                         

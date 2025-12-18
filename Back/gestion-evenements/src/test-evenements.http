@@ -101,7 +101,7 @@ User-Id: {{userId}}
 {
   "titre": "Grande Conférence sur l'IA et le Machine Learning",
   "lieu": "Grand Amphithéâtre - Université M'Sila",
-  "capaciteMax": 150
+  "capaciteMax": 140
 }
 
 ###############################################
@@ -217,3 +217,6 @@ User-Id: 999
 
 ### TEST 26 : Obtenir événement inexistant (ERREUR 404 attendue)
 GET {{baseUrl}}/9999
+
+### Mettre à jour le status des événements
+POST http://localhost:8082/api/evenements/update-status

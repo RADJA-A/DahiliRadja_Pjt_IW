@@ -4,13 +4,15 @@
 @evenementId = 1
 
 ###############################################
+# verifie les participant a l'evenement 12
+GET {{baseUrl}}/evenement/12
 # PARTICIPANT : S'inscrire à un événement
 ###############################################
 POST {{baseUrl}}
 Content-Type: application/json
 
 {
-  "userId": 1,
+  "userId": 14,
   "evenementId": 1
 }
 
@@ -33,9 +35,13 @@ GET {{baseUrl}}/user/1
 ###############################################
 # PARTICIPANT : Se désinscrire
 ###############################################
-DELETE {{baseUrl}}/1
+DELETE {{baseUrl}}/19
 
 ###############################################
+# Testez directement
+curl http://localhost:8082/api/evenements/6
+
+DELETE http://localhost:8084/api/inscriptions/45
 # ORGANISATEUR : Voir les participants de mon événement
 ###############################################
 GET {{baseUrl}}/evenement/1

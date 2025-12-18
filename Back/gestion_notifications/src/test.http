@@ -279,3 +279,21 @@ PUT {{baseUrl}}/user/1/marquer-toutes-lues
 
 ### Étape 6 : Statistiques finales
 GET {{baseUrl}}/user/1/statistiques
+
+###############################################
+# TEST : Notifier organisateur - Nouvel inscrit
+###############################################
+POST {{baseUrl}}/organisateur/nouvel-inscrit
+?organisateurId=2
+&evenementId=2
+&titreEvenement=Conférence sur l'IA
+&nombreInscrits=15
+
+###############################################
+# TEST : Notifier organisateur - Désinscription
+###############################################
+POST {{baseUrl}}/organisateur/desinscription
+?organisateurId=2
+&evenementId=1
+&titreEvenement=Conférence sur l'IA
+&nombreInscrits=14

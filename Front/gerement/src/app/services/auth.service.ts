@@ -194,7 +194,7 @@ export class AuthService {
     return headers;
   }
     
-  // === PRIVATE METHODS ===
+
   private saveUserToStorage(response: LoginResponse): void {
     if (isPlatformBrowser(this.platformId)) {
       localStorage.setItem('token', response.token);

@@ -51,7 +51,7 @@ public class EvenementService {
         return convertToDTO(saved); }
 
 
-         public EvenementDTO updateEvenement(Long id, UpdateEvenementDTO dto, Long userId) {
+    public EvenementDTO updateEvenement(Long id, UpdateEvenementDTO dto, Long userId) {
         Evenements evenement = evenementRepository.findById(id)
             .orElseThrow(() -> new EvenementNotFoundException("Événement non trouvé avec l'ID: " + id));
         
@@ -84,7 +84,7 @@ public class EvenementService {
     }
 
 
-      public void deleteEvenement(Long id, Long userId) {
+    public void deleteEvenement(Long id, Long userId) {
         Evenements evenement = evenementRepository.findById(id)
             .orElseThrow(() -> new EvenementNotFoundException("Événement non trouvé avec l'ID: " + id));
         
@@ -101,7 +101,7 @@ public class EvenementService {
         return convertToDTO(evenement);
     }
 
-     public List<EvenementDTO> searchEvenements(EvenementSearchCriteria criteria) {
+    public List<EvenementDTO> searchEvenements(EvenementSearchCriteria criteria) {
         TypeEvenement type = criteria.getType() != null ? TypeEvenement.valueOf(criteria.getType()) : null;
         StatutEvenement statut = criteria.getStatut() != null ? StatutEvenement.valueOf(criteria.getStatut()) : null;
         
@@ -117,7 +117,7 @@ public class EvenementService {
     }
 
 
-     public List<EvenementDTO> getAllEvenements() {
+    public List<EvenementDTO> getAllEvenements() {
         return evenementRepository.findAll().stream()
             .map(this::convertToDTO)
             .collect(Collectors.toList());
@@ -196,6 +196,30 @@ public class EvenementService {
             throw new ValidationException("La date de début ne peut pas être dans le passé");
         }
     }
+
+    @Transactional
+public void mettreAJourStatuts() {
+    List<Evenements> evenements = evenementRepository.findAll();
+
+    LocalDateTime now = LocalDateTime.now();
+
+    for (Evenements evenement : evenements) {
+        if (evenement.getStatut() == StatutEvenement.ANNULE) {
+            continue; // on ne change pas les événements annulés
+        }
+
+        if (evenement.getDateDebut().isAfter(now)) {
+            evenement.setStatut(StatutEvenement.AVENIR);
+        } else if (evenement.getDateDebut().isBefore(now) && evenement.getDateFin().isAfter(now)) {
+            evenement.setStatut(StatutEvenement.ENCOURS);
+        } else if (evenement.getDateFin().isBefore(now)) {
+            evenement.setStatut(StatutEvenement.TERMINE);
+        }
+
+        evenementRepository.save(evenement);
+    }
+}
+
 
      private EvenementDTO convertToDTO(Evenements evenement) {
         EvenementDTO dto = new EvenementDTO();

@@ -1,0 +1,41 @@
+### Test 1: Inscription d'un nouvel utilisateur
+POST http://localhost:8081/api/auth/signup
+Content-Type: application/json
+
+{
+  "nom": "piska",
+  "prenom": "lily",
+  "email": "lilyp@test.com",
+  "password": "123456",
+  "role": "ORGANIZER"
+}
+
+###
+
+### Test 2: Inscription d'un organisateur
+POST http://localhost:8081/api/auth/signup
+Content-Type: application/json
+
+{
+  "nom": "ellos",
+  "prenom": "ella",
+  "email": "ella@test.com",
+  "password": "password",
+  "role": "ORGANIZER"
+}
+
+###
+
+### Test 3: Connexion
+POST http://localhost:8081/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "ella@test.com",
+  "password": "password"
+}
+###
+#on teste le controller users
+GET http://localhost:8081/api/users/11
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiT1JHQU5JWkVSIiwic3ViIjoiZWxsYUB0ZXN0LmNvbSIsImlhdCI6MTc2NTk4NzQ4OSwiZXhwIjoxNzY2MDczODg5fQ.YaKjvrqyZ1OFROXTR4KpW6AvpvKCE67vcj469wVA-vQ
+

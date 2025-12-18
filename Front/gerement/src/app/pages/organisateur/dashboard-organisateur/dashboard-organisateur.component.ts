@@ -6,6 +6,7 @@ import { InscriptionService } from '../../../services/inscription.service';
 
 @Component({
   selector: 'app-dashboard-organisateur',
+  standalone: true,
   imports: [CommonModule, RouterLink],
   templateUrl: './dashboard-organisateur.component.html',
   styleUrls: ['./dashboard-organisateur.component.css']
@@ -36,6 +37,10 @@ export class DashboardOrganisateurComponent implements OnInit {
     this.evenementService.getMesEvenements(this.user.id).subscribe({
       next: (data) => {
         this.evenements = data;
+        
+        // CALCULER LE TOTAL DES PARTICIPANTS MANUELLEMENT
+        this.calculerTotalParticipants();
+        
         this.loading = false;
       },
       error: (err) => {
@@ -48,8 +53,38 @@ export class DashboardOrganisateurComponent implements OnInit {
     this.evenementService.getStatistiques(this.user.id).subscribe({
       next: (data) => {
         this.statistiques = data;
+        
+        // Si totalParticipants n'existe pas dans les statistiques, le calculer
+        if (!this.statistiques.totalParticipants) {
+          this.statistiques.totalParticipants = this.calculerTotalParticipantsFromEvents();
+        }
       }
     });
+  }
+
+  // Méthode pour calculer le total des participants
+  calculerTotalParticipants(): void {
+    if (this.evenements && this.evenements.length > 0) {
+      const total = this.evenements.reduce((sum, event) => {
+        return sum + (event.nombreInscrits || 0);
+      }, 0);
+      
+      // Mettre à jour les statistiques
+      this.statistiques.totalParticipants = total;
+    } else {
+      this.statistiques.totalParticipants = 0;
+    }
+  }
+
+  // Alternative: Calculer depuis les événements déjà chargés
+  calculerTotalParticipantsFromEvents(): number {
+    if (!this.evenements || this.evenements.length === 0) {
+      return 0;
+    }
+    
+    return this.evenements.reduce((total, event) => {
+      return total + (event.nombreInscrits || 0);
+    }, 0);
   }
 
   refreshDashboard() {

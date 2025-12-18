@@ -79,45 +79,55 @@ export class InscriptionService {
   // =====================================================================
   // Se désinscrire d'un événement - AVEC NOTIFICATION
   // =====================================================================
-  desinscrire(inscriptionId: number): Observable<void> {
-    // D'abord récupérer l'inscription pour avoir les infos
-    return this.getInscriptionById(inscriptionId).pipe(
-      switchMap(inscription => {
-        // Récupérer l'événement pour avoir son titre
-        return this.evenementService.getEvenementById(inscription.evenementId).pipe(
-          switchMap(evenement => {
-            // Supprimer l'inscription
-            return this.http.delete<void>(`${this.apiUrl}/${inscriptionId}`).pipe(
-              switchMap(() => {
-                console.log('✅ Désinscription effectuée');
-                
-                // Envoyer la notification d'annulation
-                return this.notificationService.envoyerAnnulationInscription(
-                  inscription.userId,
-                  inscription.evenementId,
-                  evenement.titre!
-                ).pipe(
-                  tap(() => console.log('📧 Notification d\'annulation envoyée')),
-                  catchError(error => {
-                    console.warn('⚠️ Erreur envoi notification:', error);
-                    return of(undefined);
-                  }),
-                  map(() => undefined)
-                );
-              })
-            );
-          }),
-          catchError(error => {
-            console.warn('⚠️ Erreur récupération événement:', error);
-            // Continuer quand même avec la désinscription
-            return this.http.delete<void>(`${this.apiUrl}/${inscriptionId}`).pipe(
-              tap(() => console.log('✅ Désinscription effectuée (sans notification)'))
-            );
-          })
-        );
-      })
-    );
-  }
+  // inscription.service.ts
+desinscrire(inscriptionId: number): Observable<void> {
+  console.log('🔴 DELETE appelé sur:', `${this.apiUrl}/${inscriptionId}`);
+  
+  // Version AVEC notifications
+  return this.getInscriptionById(inscriptionId).pipe(
+    switchMap(inscription => {
+      console.log('📝 Inscription récupérée pour notification:', inscription);
+      
+      return this.evenementService.getEvenementById(inscription.evenementId).pipe(
+        switchMap(evenement => {
+          console.log('🎯 Événement récupéré:', evenement.titre);
+          
+          // 1. Supprimer l'inscription
+          return this.http.delete<void>(`${this.apiUrl}/${inscriptionId}`).pipe(
+            // 2. Envoyer la notification après succès
+            switchMap(() => {
+              console.log('✅ Désinscription effectuée, envoi notification...');
+              
+              return this.notificationService.envoyerAnnulationInscription(
+                inscription.userId,
+                inscription.evenementId,
+                evenement.titre!
+              ).pipe(
+                tap(() => console.log('📧 Notification envoyée')),
+                catchError(notifError => {
+                  console.warn('⚠️ Erreur notification (mais désinscription OK):', notifError);
+                  return of(undefined);
+                }),
+                map(() => undefined)
+              );
+            })
+          );
+        }),
+        catchError(eventError => {
+          console.warn('⚠️ Erreur récupération événement:', eventError);
+          // Supprimer quand même sans notification
+          return this.http.delete<void>(`${this.apiUrl}/${inscriptionId}`).pipe(
+            tap(() => console.log('✅ Désinscription (sans notification)'))
+          );
+        })
+      );
+    }),
+    catchError(error => {
+      console.error('🔴 ERREUR:', error);
+      throw error;
+    })
+  );
+}
 
   // =====================================================================
   // MÉTHODES INCHANGÉES
@@ -421,4 +431,8 @@ export class InscriptionService {
       })
     );
   }
+
+  
+
+
 }

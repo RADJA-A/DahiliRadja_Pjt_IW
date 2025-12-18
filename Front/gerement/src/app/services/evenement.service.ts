@@ -25,7 +25,7 @@ export class EvenementService {
 
   constructor(private http: HttpClient) {}
 
-  // Tous les événements
+  // tous les événements
   getAllEvenements(): Observable<Evenement[]> {
     return this.http.get<Evenement[]>(this.apiUrl);
   }
@@ -35,17 +35,17 @@ export class EvenementService {
     return this.http.get<Evenement[]>(`${this.apiUrl}/organisateur/${organisateurId}`);
   }
 
-  // Un événement par ID
+  // un événement par ID
   getEvenementById(id: number): Observable<Evenement> {
     return this.http.get<Evenement>(`${this.apiUrl}/${id}`);
   }
 
-  // Créer événement
+  // créer événement
   createEvenement(evenement: Evenement): Observable<Evenement> {
     return this.http.post<Evenement>(this.apiUrl, evenement);
   }
 
-  // Modifier événement
+  // modifier événement
   updateEvenement(id: number, evenement: any, userId: number): Observable<Evenement> {
     return this.http.put<Evenement>(`${this.apiUrl}/${id}`, evenement, {
       headers: { 'User-Id': userId.toString() }
@@ -53,7 +53,7 @@ export class EvenementService {
 
   }
 
-  // Supprimer événement
+  // supprimer événement
   deleteEvenement(id: number, userId: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`, {
       headers: { 'User-Id': userId.toString() }
@@ -65,15 +65,12 @@ export class EvenementService {
     return this.http.get<Evenement[]>(`${this.apiUrl}/search`, { params });
   }
 
-  // Statistiques
+  
   getStatistiques(organisateurId: number): Observable<any> {
     return this.http.get(`${this.apiUrl}/statistiques/${organisateurId}`);
   }
 
-   /**
-   * Calcule le statut d'un événement côté frontend
-   * Utile pour afficher le bon statut sans recharger la page
-   */
+ 
   calculerStatut(evenement: Evenement): string {
     const now = new Date();
     const dateDebut = new Date(evenement.dateDebut);
@@ -93,9 +90,7 @@ export class EvenementService {
     }
   }
 
-  /**
-   * Récupère et met à jour les statuts côté backend
-   */
+
   mettreAJourStatuts(): Observable<void> {
   return this.http.post<void>(`${this.apiUrl}/update-status`, {});
   

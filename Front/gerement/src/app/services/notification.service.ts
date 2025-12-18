@@ -30,11 +30,7 @@ export class NotificationService {
 
   constructor(private http: HttpClient) {}
 
-  // =========================================================================
-  // RÉCUPÉRATION DES NOTIFICATIONS
-  // =========================================================================
 
-  // Toutes mes notifications
   getMesNotifications(userId: number): Observable<Notification[]> {
     console.log(`📥 Fetching notifications for user ${userId} from ${this.apiUrl}/user/${userId}`);
     
@@ -47,7 +43,7 @@ export class NotificationService {
     );
   }
 
-  // Notifications non lues
+ 
   getNotificationsNonLues(userId: number): Observable<Notification[]> {
     console.log(`📥 Fetching unread notifications for user ${userId}`);
     return this.http.get<Notification[]>(`${this.apiUrl}/user/${userId}/non-lues`).pipe(
@@ -59,7 +55,7 @@ export class NotificationService {
     );
   }
 
-  // Notifications lues
+
   getNotificationsLues(userId: number): Observable<Notification[]> {
     console.log(`📥 Fetching read notifications for user ${userId}`);
     return this.http.get<Notification[]>(`${this.apiUrl}/user/${userId}/lues`).pipe(
@@ -71,11 +67,7 @@ export class NotificationService {
     );
   }
 
-  // =========================================================================
-  // MARQUAGE COMME LUE
-  // =========================================================================
 
-  // Marquer comme lue
   marquerCommeLue(notificationId: number, userId: number): Observable<Notification> {
     console.log(`📝 Marking notification ${notificationId} as read for user ${userId}`);
     return this.http.put<Notification>(
@@ -91,7 +83,7 @@ export class NotificationService {
     );
   }
 
-  // Marquer toutes comme lues
+
   marquerToutesLues(userId: number): Observable<void> {
     console.log(`📝 Marking all notifications as read for user ${userId}`);
     return this.http.put<void>(`${this.apiUrl}/user/${userId}/marquer-toutes-lues`, {}).pipe(
@@ -103,11 +95,7 @@ export class NotificationService {
     );
   }
 
-  // =========================================================================
-  // SUPPRESSION
-  // =========================================================================
 
-  // Supprimer notification
   supprimerNotification(notificationId: number, userId: number): Observable<void> {
     console.log(`🗑️ Deleting notification ${notificationId} for user ${userId}`);
     return this.http.delete<void>(`${this.apiUrl}/${notificationId}`, {
@@ -121,7 +109,7 @@ export class NotificationService {
     );
   }
 
-  // Supprimer toutes les notifications lues
+
   supprimerNotificationsLues(userId: number): Observable<void> {
     console.log(`🗑️ Deleting all read notifications for user ${userId}`);
     return this.http.delete<void>(`${this.apiUrl}/user/${userId}/supprimer-lues`).pipe(
@@ -133,11 +121,7 @@ export class NotificationService {
     );
   }
 
-  // =========================================================================
-  // STATISTIQUES
-  // =========================================================================
 
-  // Get notification statistics (CORRECTION: endpoint avec "statistiques" pas "stats")
   getStatistiques(userId: number): Observable<NotificationStats> {
     return this.http.get<NotificationStats>(`${this.apiUrl}/user/${userId}/statistiques`).pipe(
       tap(stats => console.log('✅ Statistics received:', stats)),
@@ -148,14 +132,7 @@ export class NotificationService {
     );
   }
 
-  // =========================================================================
-  // ENVOI DE NOTIFICATIONS (NOUVEAU - POUR LES ORGANISATEURS)
-  // =========================================================================
 
-  /**
-   * Envoyer une notification de confirmation d'inscription
-   * À appeler quand un participant s'inscrit à un événement
-   */
   envoyerConfirmationInscription(
     userId: number, 
     evenementId: number, 
@@ -180,10 +157,7 @@ export class NotificationService {
     );
   }
 
-  /**
-   * Envoyer une notification d'annulation d'inscription
-   * À appeler quand un participant se désinscrit
-   */
+
   envoyerAnnulationInscription(
     userId: number, 
     evenementId: number, 
@@ -206,10 +180,6 @@ export class NotificationService {
     );
   }
 
-  /**
-   * Envoyer une notification de modification d'événement
-   * À appeler quand un organisateur modifie un événement
-   */
   envoyerModificationEvenement(
     userId: number, 
     evenementId: number, 
@@ -234,10 +204,7 @@ export class NotificationService {
     );
   }
 
-  /**
-   * Envoyer une notification d'annulation d'événement
-   * À appeler quand un organisateur annule un événement
-   */
+  
   envoyerAnnulationEvenement(
     userId: number, 
     evenementId: number, 
@@ -260,10 +227,7 @@ export class NotificationService {
     );
   }
 
-  /**
-   * Envoyer une notification de rappel d'événement
-   * À appeler avant un événement (par exemple 24h avant)
-   */
+ 
   envoyerRappelEvenement(
     userId: number, 
     evenementId: number, 
@@ -293,10 +257,7 @@ export class NotificationService {
     );
   }
 
-  /**
-   * Envoyer une notification à tous les participants d'un événement
-   * Utile pour les modifications ou annulations
-   */
+
   notifierTousLesParticipants(
     userIds: number[], 
     evenementId: number, 

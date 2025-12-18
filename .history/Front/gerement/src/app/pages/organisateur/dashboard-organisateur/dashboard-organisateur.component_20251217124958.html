@@ -1,0 +1,122 @@
+<div class="dashboard">
+  <div class="container">
+    <!-- En-tête élégant -->
+    <div class="dashboard-header">
+      <div class="header-content">
+        <div class="header-text">
+          <h1>Tableau de bord</h1>
+          <p class="subtitle">Bienvenue, {{ user?.prenom }} ! Voici un aperçu de vos événements</p>
+        </div>
+        <button class="btn-refresh" (click)="refreshDashboard()" [disabled]="loading">
+          <span class="btn-icon">↻</span> Actualiser
+        </button>
+      </div>
+    </div>
+
+    <!-- Statistiques -->
+    <div class="stats-grid">
+      <div class="stat-card card">
+        <div class="stat-icon">📊</div>
+        <div class="stat-info">
+           <h3>{{ (statistiques.totalParticipants !== undefined ? statistiques.totalParticipants : calculerTotalParticipants()) || 0 }}</h3>
+          <p>Événements créés</p>
+        </div>
+      </div>
+
+      <div class="stat-card card">
+        <div class="stat-icon">📅</div>
+        <div class="stat-info">
+          <h3>{{ statistiques.evenementsAVenir || 0 }}</h3>
+          <p>À venir</p>
+        </div>
+      </div>
+
+      <div class="stat-card card">
+        <div class="stat-icon">👥</div>
+        <div class="stat-info">
+          <h3>{{ statistiques.totalParticipants || 0 }}</h3>
+          <p>Participants total</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mes événements récents -->
+    <div class="recent-events">
+      <div class="section-header">
+        <div class="section-title">
+          <h2>Événements récents</h2>
+          <p class="section-subtitle">{{ evenements.length }} événement(s) au total</p>
+        </div>
+        <div class="section-actions">
+          <a routerLink="/organisateur/mes-evenements" class="btn btn-secondary">
+            Voir tous
+          </a>
+          <a routerLink="/organisateur/creer-evenement" class="btn btn-primary">
+            <span class="btn-icon">+</span> Nouvel événement
+          </a>
+        </div>
+      </div>
+
+      <!-- État de chargement -->
+      <div class="loading-state" *ngIf="loading">
+        <div class="spinner"></div>
+        <p>Chargement des événements...</p>
+      </div>
+
+      <!-- Grille d'événements -->
+      <div class="events-grid" *ngIf="!loading && evenements.length > 0">
+        <div class="event-card card" *ngFor="let event of evenements.slice(0, 6)">
+          <div class="event-content">
+            <div class="event-header">
+              <h3 class="event-title">{{ event.titre }}</h3>
+              <div class="event-meta">
+                <span class="meta-item" title="Date">
+                  <span class="meta-icon">📅</span>
+                  {{ event.dateDebut | date:'dd/MM/yy' }}
+                </span>
+                <span class="meta-item" title="Participants">
+                  <span class="meta-icon">👥</span>
+                  {{ event.nombreInscrits || 0 }}/{{ event.capaciteMax }}
+                </span>
+              </div>
+            </div>
+
+            <div class="event-details">
+              <p class="event-location">
+                <span class="detail-icon">📍</span>
+                {{ event.lieu }}
+              </p>
+              <p class="event-type" *ngIf="event.type">
+                <span class="detail-icon">🏷️</span>
+                {{ getTypeLabel(event.type) }}
+              </p>
+            </div>
+
+            <div class="event-progress">
+              <div class="progress-bar">
+                <div class="progress-fill" [style.width]="getProgressPercentage(event) + '%'"></div>
+              </div>
+              <span class="progress-text">{{ getProgressPercentage(event) }}% rempli</span>
+            </div>
+
+            <div class="event-actions">
+              <a [routerLink]="['/organisateur/participants', event.id]" class="btn btn-secondary">
+                Participants
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- État vide -->
+      <div class="empty-state" *ngIf="!loading && evenements.length === 0">
+        <div class="empty-icon">📋</div>
+        <h3>Aucun événement créé</h3>
+        <p>Créez votre premier événement pour commencer</p>
+        <a routerLink="/organisateur/creer-evenement" class="btn btn-primary">
+          Créer mon premier événement
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

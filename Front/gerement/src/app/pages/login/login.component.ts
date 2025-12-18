@@ -106,7 +106,7 @@ export class LoginComponent {
     }
   }
 
-  // Handle legacy response format if needed
+  
   private handleLegacyResponse(response: any, email: string): void {
     console.log('Falling back to legacy response handling');
     
@@ -162,7 +162,7 @@ export class LoginComponent {
     }
   }
 
-  // Test methods remain unchanged
+  
   testLogin() {
     console.log('=== TEST LOGIN ===');
     

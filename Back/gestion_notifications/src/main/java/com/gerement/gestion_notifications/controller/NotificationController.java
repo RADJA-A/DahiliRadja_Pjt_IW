@@ -3,6 +3,7 @@ package com.gerement.gestion_notifications.controller;
 import com.gerement.gestion_notifications.dto.CreateNotificationDTO;
 import com.gerement.gestion_notifications.dto.NotificationDTO;
 import com.gerement.gestion_notifications.dto.NotificationStatsDTO;
+import com.gerement.gestion_notifications.model.TypeNotification;
 import com.gerement.gestion_notifications.service.NotificationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,9 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 public class NotificationController {
     private final NotificationService notificationService;
+
+    //on ajoute cette ligne pour autoriser les requetes venant de l'angular
+  //  @CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
 
     @PostMapping
     public ResponseEntity<NotificationDTO> createNotification(@Valid @RequestBody CreateNotificationDTO dto) {
@@ -121,6 +125,57 @@ public class NotificationController {
         return ResponseEntity.noContent().build();
     }
     
+  
+    @PostMapping("/organisateur/nouvel-inscrit")
+    public ResponseEntity<Void> notifierOrganisateurNouvelInscrit(
+            @RequestParam Long organisateurId,
+            @RequestParam Long evenementId,
+            @RequestParam String titreEvenement,
+            @RequestParam Integer nombreInscrits) {
+        
+        System.out.println("📢 Notification organisateur - Nouvel inscrit");
+        System.out.println("Organisateur: " + organisateurId);
+        System.out.println("Événement: " + titreEvenement + " (ID: " + evenementId + ")");
+        System.out.println("Nombre inscrits: " + nombreInscrits);
+        
+        CreateNotificationDTO dto = new CreateNotificationDTO();
+        dto.setUserId(organisateurId);
+        dto.setTitre("Nouveau participant !");
+        dto.setMessage("Un nouveau participant s'est inscrit à votre événement \"" + 
+                      titreEvenement + "\". Vous avez maintenant " + nombreInscrits + " participant(s).");
+        dto.setType(TypeNotification.valueOf("NOUVEL_INSCRIT"));
+        dto.setEvenementId(evenementId);
+        
+        notificationService.createNotification(dto);
+        
+        return ResponseEntity.ok().build();
+    }
+    
+   
+    @PostMapping("/organisateur/desinscription")
+    public ResponseEntity<Void> notifierOrganisateurDesinscription(
+            @RequestParam Long organisateurId,
+            @RequestParam Long evenementId,
+            @RequestParam String titreEvenement,
+            @RequestParam Integer nombreInscrits) {
+        
+        System.out.println("📢 Notification organisateur - Désinscription");
+        System.out.println("Organisateur: " + organisateurId);
+        System.out.println("Événement: " + titreEvenement + " (ID: " + evenementId + ")");
+        System.out.println("Nombre inscrits restants: " + nombreInscrits);
+        
+        CreateNotificationDTO dto = new CreateNotificationDTO();
+        dto.setUserId(organisateurId);
+        dto.setTitre("Participant désinscrit");
+        dto.setMessage("Un participant s'est désinscrit de votre événement \"" + 
+                      titreEvenement + "\". Il reste " + nombreInscrits + " participant(s).");
+        dto.setType(TypeNotification.valueOf("DESINSCRIPTION_PAR"));
+        dto.setEvenementId(evenementId);
+        
+        notificationService.createNotification(dto);
+        
+        return ResponseEntity.ok().build();
+    }
     @GetMapping("/user/{userId}/statistiques")
     public ResponseEntity<NotificationStatsDTO> getStatistiques(@PathVariable Long userId) {
         NotificationStatsDTO stats = notificationService.getStatistiques(userId);

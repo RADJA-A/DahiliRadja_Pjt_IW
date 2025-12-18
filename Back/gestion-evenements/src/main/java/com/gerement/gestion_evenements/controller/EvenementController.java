@@ -22,7 +22,7 @@ public class EvenementController {
         EvenementDTO created = evenementService.creatEvenement(dto);
         return new ResponseEntity<>(created, HttpStatus.CREATED);
     }
-    
+
     @PutMapping("/{id}")
     public ResponseEntity<EvenementDTO> updateEvenement(
             @PathVariable Long id,
@@ -87,6 +87,13 @@ public class EvenementController {
         evenementService.decrementerNombreInscrits(id);
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/update-status")
+public ResponseEntity<Void> updateStatuts() {
+    evenementService.mettreAJourStatuts();
+    return ResponseEntity.ok().build();
+}
+
     
         @GetMapping("/statistiques/{organisateurId}")
     public ResponseEntity<StatistiquesDTO> getStatistiques(@PathVariable Long organisateurId) {

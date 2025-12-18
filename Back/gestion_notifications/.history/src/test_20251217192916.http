@@ -1,0 +1,299 @@
+### Variables
+@baseUrl = http://localhost:8083/api/notifications
+@userId = 1
+@evenementId = 1
+@notificationId = 1
+
+###############################################
+# TEST 1 : Créer une notification manuelle
+###############################################
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "titre": "Bienvenue sur la plateforme",
+  "message": "Merci de vous être inscrit. Vous pouvez maintenant consulter les événements disponibles.",
+  "type": "CONFIRMATION_INSCRIPTION"
+}
+
+###############################################
+# TEST 2 : Envoyer notification de confirmation d'inscription
+###############################################
+POST {{baseUrl}}/confirmation-inscription?userId=1&evenementId=1&titreEvenement=Conférence sur l'IA&inscriptionId=1
+
+###############################################
+# TEST 3 : Envoyer notification d'annulation d'inscription
+###############################################
+POST {{baseUrl}}/annulation-inscription?userId=1&evenementId=1&titreEvenement=Conférence sur l'IA
+
+###############################################
+# TEST 4 : Envoyer notification de modification d'événement
+###############################################
+POST {{baseUrl}}/modification-evenement?userId=1&evenementId=1&titreEvenement=Conférence sur l'IA&details=La salle a été changée pour le Grand Amphithéâtre
+
+###############################################
+# TEST 5 : Envoyer notification d'annulation d'événement
+###############################################
+POST {{baseUrl}}/annulation-evenement?userId=1&evenementId=1&titreEvenement=Conférence sur l'IA
+
+###############################################
+# TEST 6 : Envoyer notification de rappel d'événement
+###############################################
+POST {{baseUrl}}/rappel-evenement?userId=1&evenementId=1&titreEvenement=Conférence sur l'IA&dateEvenement=2025-12-15T09:00:00
+
+###############################################
+# TEST 7 : Créer plusieurs notifications pour test
+###############################################
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "titre": "Nouvel événement disponible",
+  "message": "Un nouvel événement 'Formation Spring Boot' vient d'être ajouté.",
+  "type": "INFO_GENERALE",
+  "evenementId": 2
+}
+
+###
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "titre": "Rappel : Événement demain",
+  "message": "N'oubliez pas votre événement 'Conférence sur l'IA' demain à 9h.",
+  "type": "RAPPEL_EVENEMENT",
+  "evenementId": 1
+}
+
+###
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "userId": 2,
+  "titre": "Inscription confirmée",
+  "message": "Votre inscription au concert a été confirmée.",
+  "type": "CONFIRMATION_INSCRIPTION",
+  "evenementId": 3
+}
+
+###############################################
+# TEST 8 : Récupérer toutes les notifications d'un utilisateur
+###############################################
+GET {{baseUrl}}/user/{{userId}}
+
+###############################################
+# TEST 9 : Récupérer uniquement les notifications NON LUES
+###############################################
+GET {{baseUrl}}/user/{{userId}}/non-lues
+
+###############################################
+# TEST 10 : Récupérer uniquement les notifications LUES
+###############################################
+GET {{baseUrl}}/user/{{userId}}/lues
+
+###############################################
+# TEST 11 : Marquer UNE notification comme lue
+###############################################
+PUT {{baseUrl}}/{{notificationId}}/marquer-lue
+User-Id: {{userId}}
+
+###############################################
+# TEST 12 : Vérifier que la notification est marquée comme lue
+###############################################
+GET {{baseUrl}}/user/{{userId}}
+
+###############################################
+# TEST 13 : Marquer TOUTES les notifications comme lues
+###############################################
+PUT {{baseUrl}}/user/{{userId}}/marquer-toutes-lues
+
+###############################################
+# TEST 14 : Vérifier qu'il n'y a plus de notifications non lues
+###############################################
+GET {{baseUrl}}/user/{{userId}}/non-lues
+
+###############################################
+# TEST 15 : Obtenir les statistiques des notifications
+###############################################
+GET {{baseUrl}}/user/{{userId}}/statistiques
+
+###############################################
+# TEST 16 : Supprimer UNE notification spécifique
+###############################################
+DELETE {{baseUrl}}/2
+User-Id: {{userId}}
+
+###############################################
+# TEST 17 : Vérifier la suppression
+###############################################
+GET {{baseUrl}}/user/{{userId}}
+
+###############################################
+# TEST 18 : Créer des notifications, les marquer comme lues, puis les supprimer
+###############################################
+# Étape 1 : Créer une notification
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "titre": "Notification test suppression",
+  "message": "Cette notification sera supprimée après lecture.",
+  "type": "INFO_GENERALE"
+}
+
+### Étape 2 : Marquer toutes comme lues
+PUT {{baseUrl}}/user/{{userId}}/marquer-toutes-lues
+
+### Étape 3 : Supprimer toutes les notifications lues
+DELETE {{baseUrl}}/user/{{userId}}/supprimer-lues
+
+### Étape 4 : Vérifier qu'elles sont supprimées
+GET {{baseUrl}}/user/{{userId}}/lues
+
+###############################################
+# TEST 19 : Simuler un workflow complet d'inscription
+###############################################
+# 1. Confirmation d'inscription
+POST {{baseUrl}}/confirmation-inscription?userId=1&evenementId=1&titreEvenement=Workshop Angular&inscriptionId=5
+
+### 2. Vérifier la notification
+GET {{baseUrl}}/user/1/non-lues
+
+### 3. Marquer comme lue
+PUT {{baseUrl}}/1/marquer-lue
+User-Id: 1
+
+### 4. Modification de l'événement
+POST {{baseUrl}}/modification-evenement?userId=1&evenementId=1&titreEvenement=Workshop Angular&details=L'heure de début a été décalée à 10h au lieu de 9h
+
+### 5. Vérifier les nouvelles notifications
+GET {{baseUrl}}/user/1/non-lues
+
+###############################################
+# TEST 20 : Simuler un workflow d'annulation d'événement
+###############################################
+# 1. L'utilisateur s'inscrit (notification de confirmation)
+POST {{baseUrl}}/confirmation-inscription?userId=1&evenementId=2&titreEvenement=Séminaire Marketing&inscriptionId=10
+
+### 2. L'organisateur annule l'événement (notification d'annulation)
+POST {{baseUrl}}/annulation-evenement?userId=1&evenementId=2&titreEvenement=Séminaire Marketing
+
+### 3. Voir toutes les notifications
+GET {{baseUrl}}/user/1
+
+###############################################
+# TEST 21 : Tester les notifications pour plusieurs utilisateurs
+###############################################
+# Créer notifications pour utilisateur 2
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "userId": 2,
+  "titre": "Bienvenue utilisateur 2",
+  "message": "Vous avez rejoint la plateforme.",
+  "type": "INFO_GENERALE"
+}
+
+### Voir les notifications de l'utilisateur 2
+GET {{baseUrl}}/user/2
+
+### Voir les statistiques de l'utilisateur 2
+GET {{baseUrl}}/user/2/statistiques
+
+###############################################
+# TEST 22 : Tester avec des données invalides (erreur attendue)
+###############################################
+# Notification sans titre (ERREUR attendue)
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "message": "Message sans titre",
+  "type": "INFO_GENERALE"
+}
+
+### Notification sans userId (ERREUR attendue)
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "titre": "Titre sans userId",
+  "message": "Message sans userId",
+  "type": "INFO_GENERALE"
+}
+
+### Notification avec type invalide (ERREUR attendue)
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "titre": "Test type invalide",
+  "message": "Ce type n'existe pas",
+  "type": "TYPE_INEXISTANT"
+}
+
+###############################################
+# TEST 23 : Marquer comme lue une notification qui n'appartient pas à l'utilisateur (ERREUR attendue)
+###############################################
+PUT {{baseUrl}}/1/marquer-lue
+User-Id: 999
+
+###############################################
+# TEST 24 : Supprimer une notification qui n'appartient pas à l'utilisateur (ERREUR attendue)
+###############################################
+DELETE {{baseUrl}}/1
+User-Id: 999
+
+###############################################
+# TEST 25 : Tester une notification inexistante (ERREUR 404 attendue)
+###############################################
+PUT {{baseUrl}}/9999/marquer-lue
+User-Id: 1
+
+###############################################
+# SCÉNARIO COMPLET : Cycle de vie d'un événement avec notifications
+###############################################
+
+### Étape 1 : Un utilisateur s'inscrit à un événement
+POST {{baseUrl}}/confirmation-inscription?userId=1&evenementId=5&titreEvenement=Hackathon 2025&inscriptionId=20
+
+### Étape 2 : 3 jours avant, l'utilisateur reçoit un rappel
+POST {{baseUrl}}/rappel-evenement?userId=1&evenementId=5&titreEvenement=Hackathon 2025&dateEvenement=2025-12-20T09:00:00
+
+### Étape 3 : L'organisateur modifie le lieu
+POST {{baseUrl}}/modification-evenement?userId=1&evenementId=5&titreEvenement=Hackathon 2025&details=Le lieu a été changé pour la Salle Innovation
+
+### Étape 4 : L'utilisateur consulte ses notifications
+GET {{baseUrl}}/user/1/non-lues
+
+### Étape 5 : L'utilisateur lit ses notifications
+PUT {{baseUrl}}/user/1/marquer-toutes-lues
+
+### Étape 6 : Statistiques finales
+GET {{baseUrl}}/user/1/statistiques
+
+###############################################
+# TEST : Notifier organisateur - Nouvel inscrit
+###############################################
+POST {{baseUrl}}/organisateur/nouvel-inscrit
+?organisateurId=2
+&evenementId=2
+&titreEvenement=Conférence sur l'IA
+&nombreInscrits=15
+
+###############################################
+# TEST : Notifier organisateur - Désinscription
+###############################################
+POST {{baseUrl}}/organisateur/desinscription
+?organisateurId=2
+&evenementId=1
+&titreEvenement=Conférence sur l'IA
+&nombreInscrits=14

@@ -18,7 +18,7 @@
       <div class="stat-card card">
         <div class="stat-icon">📊</div>
         <div class="stat-info">
-          <h3>{{ statistiques.totalEvenements || 0 }}</h3>
+           <h3>{{ (statistiques.totalParticipants !== undefined ? statistiques.totalParticipants : calculerTotalParticipants()) || 0 }}</h3>
           <p>Événements créés</p>
         </div>
       </div>

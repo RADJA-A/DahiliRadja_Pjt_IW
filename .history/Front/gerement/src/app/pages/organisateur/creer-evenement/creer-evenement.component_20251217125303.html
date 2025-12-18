@@ -1,0 +1,221 @@
+<div class="creer-evenement">
+  <div class="container">
+    <!-- En-tête élégant -->
+    <div class="page-header">
+      <div class="header-content">
+        <div class="header-text">
+          <h1><span class="header-icon"></span> Créer un Événement</h1>
+          <p class="subtitle">Remplissez les détails de votre nouvel événement</p>
+        </div>
+        <a routerLink="/organisateur/mes-evenements" class="btn-back">
+          <span class="btn-icon">←</span> Retour aux événements
+        </a>
+      </div>
+    </div>
+
+    <!-- Formulaire -->
+    <div class="form-wrapper">
+      <form (ngSubmit)="onSubmit()" class="evenement-form">
+        <!-- Section 1 : Informations principales -->
+        <div class="form-section">
+          <div class="section-header">
+            <span class="section-icon">📋</span>
+            <h3>Informations principales</h3>
+          </div>
+          
+          <div class="form-grid">
+            <!-- Titre -->
+            <div class="input-group full-width">
+              <label class="form-label">
+                <span class="label-icon">📝</span>
+                Titre de l'événement
+                <span class="required">*</span>
+              </label>
+              <input 
+                type="text" 
+                [(ngModel)]="evenement.titre" 
+                name="titre"
+                placeholder="Ex: Conférence sur l'Intelligence Artificielle"
+                class="form-input"
+                required>
+              <p class="input-hint">Donnez un titre accrocheur et descriptif</p>
+            </div>
+
+            <!-- Type -->
+            <div class="input-group">
+              <label class="form-label">
+                <span class="label-icon">🏷️</span>
+                Type d'événement
+                <span class="required">*</span>
+              </label>
+              <div class="select-container">
+                <select [(ngModel)]="evenement.type" name="type" class="form-select" required>
+                  <option *ngFor="let type of types" [value]="type">
+                    {{ getTypeLabel(type) }}
+                  </option>
+                </select>
+                <span class="select-arrow">▼</span>
+              </div>
+            </div>
+
+            <!-- Lieu -->
+            <div class="input-group">
+              <label class="form-label">
+                <span class="label-icon">📍</span>
+                Lieu
+                <span class="required">*</span>
+              </label>
+              <input 
+                type="text" 
+                [(ngModel)]="evenement.lieu" 
+                name="lieu"
+                placeholder="Ex: Université d'alger 1 - Amphi Benbatouche"
+                class="form-input"
+                required>
+            </div>
+
+            <!-- Capacité -->
+            <div class="input-group">
+              <label class="form-label">
+                <span class="label-icon">👥</span>
+                Capacité maximale
+                <span class="required">*</span>
+              </label>
+              <div class="number-container">
+                <input 
+                  type="number" 
+                  [(ngModel)]="evenement.capaciteMax" 
+                  name="capaciteMax"
+                  min="1"
+                  max="1000"
+                  placeholder="50"
+                  class="form-input number-input"
+                  required>
+                <span class="input-suffix">participants</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 2 : Dates -->
+        <div class="form-section">
+          <div class="section-header">
+            <span class="section-icon">📅</span>
+            <h3>Dates et horaires</h3>
+          </div>
+          
+          <div class="date-container">
+            <div class="date-group">
+              <label class="form-label">
+                <span class="label-icon">🕐</span>
+                Date de début
+                <span class="required">*</span>
+              </label>
+              <div class="datetime-input-container">
+                <input 
+                  type="datetime-local" 
+                  [(ngModel)]="evenement.dateDebut" 
+                  name="dateDebut"
+                  class="form-input datetime-input"
+                  required>
+              </div>
+            </div>
+
+            <div class="date-separator">
+              <div class="separator-line"></div>
+              <span class="separator-text">à</span>
+            </div>
+
+            <div class="date-group">
+              <label class="form-label">
+                <span class="label-icon">🕔</span>
+                Date de fin
+                <span class="required">*</span>
+              </label>
+              <div class="datetime-input-container">
+                <input 
+                  type="datetime-local" 
+                  [(ngModel)]="evenement.dateFin" 
+                  name="dateFin"
+                  class="form-input datetime-input"
+                  required>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 3 : Contenu -->
+        <div class="form-section">
+          <div class="section-header">
+            <span class="section-icon">🎨</span>
+            <h3>Contenu additionnel</h3>
+          </div>
+          
+          <div class="content-grid">
+            <!-- Image -->
+            <div class="input-group full-width">
+              <label class="form-label">
+                <span class="label-icon">🖼️</span>
+                Image de couverture
+                <span class="optional">(optionnel)</span>
+              </label>
+              <div class="image-input-container">
+                <input 
+                  type="url" 
+                  [(ngModel)]="evenement.imageUrl" 
+                  name="imageUrl"
+                  placeholder="https://example.com/image.jpg"
+                  class="form-input">
+                <p class="input-hint">Une belle image rendra votre événement plus attractif</p>
+              </div>
+              <div *ngIf="evenement.imageUrl" class="image-preview">
+                <img [src]="evenement.imageUrl" alt="Aperçu" (error)="evenement.imageUrl = ''">
+              </div>
+            </div>
+
+            <!-- Programme -->
+            <div class="input-group full-width">
+              <label class="form-label">
+                <span class="label-icon">📄</span>
+                Programme détaillé
+                <span class="optional">(optionnel)</span>
+              </label>
+              <div class="textarea-container">
+                <textarea 
+                  [(ngModel)]="evenement.programme" 
+                  name="programme"
+                  rows="6"
+                  placeholder="Décrivez le déroulement de votre événement...
+• 9h00 - Accueil des participants
+• 10h00 - Conférence principale
+• 12h00 - Pause déjeuner
+• 14h00 - Ateliers pratiques
+• 17h00 - Clôture et réseautage"
+                  class="form-textarea"></textarea>
+                <p class="input-hint">Détaillez le programme heure par heure pour informer vos participants</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" routerLink="/organisateur/mes-evenements">
+            <span class="btn-icon">✕</span>
+            Annuler
+          </button>
+          <button type="submit" class="btn btn-primary" [disabled]="loading">
+            <span *ngIf="!loading" class="btn-content">
+              <span class="btn-icon">✨</span>
+              Créer l'événement
+            </span>
+            <span *ngIf="loading" class="btn-content">
+              <span class="spinner"></span>
+              Création en cours...
+            </span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

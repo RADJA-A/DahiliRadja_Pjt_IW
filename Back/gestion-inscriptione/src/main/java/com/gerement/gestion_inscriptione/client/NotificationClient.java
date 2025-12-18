@@ -51,10 +51,73 @@ public class NotificationClient {
             log.error("Erreur envoi notification: {}", e.getMessage(), e);
         }
     }
+
+    
+    public void notifierOrganisateurNouvelInscrit(Long organisateurId, Long evenementId, String titreEvenement, Integer nombreInscrits) {
+        try {
+            String url = "http://localhost:8083/api/notifications/organisateur/nouvel-inscrit" +
+                "?organisateurId=" + organisateurId +
+                "&evenementId=" + evenementId +
+                "&titreEvenement=" + encodeUrl(titreEvenement) +
+                "&nombreInscrits=" + nombreInscrits;
+            
+            log.info("📤 Notification organisateur (nouvel inscrit): {}", url);
+            restTemplate.postForEntity(url, null, Void.class);
+            log.info("✅ Notification organisateur envoyée");
+            
+        } catch (Exception e) {
+            log.error("❌ Erreur notification organisateur (nouvel inscrit): {}", e.getMessage());
+            // Ne pas throw - ne pas bloquer l'inscription
+        }
+    }
+    
+    /**
+     * Notifie l'organisateur qu'un participant s'est désinscrit
+     */
+    public void notifierOrganisateurDesinscription(Long organisateurId, Long evenementId, String titreEvenement, Integer nombreInscrits) {
+        try {
+            String url = "http://localhost:8083/api/notifications/organisateur/desinscription" +
+                "?organisateurId=" + organisateurId +
+                "&evenementId=" + evenementId +
+                "&titreEvenement=" + encodeUrl(titreEvenement) +
+                "&nombreInscrits=" + nombreInscrits;
+            
+            log.info("📤 Notification organisateur (désinscription): {}", url);
+            restTemplate.postForEntity(url, null, Void.class);
+            log.info("✅ Notification organisateur envoyée");
+            
+        } catch (Exception e) {
+            log.error("❌ Erreur notification organisateur (désinscription): {}", e.getMessage());
+            // Ne pas throw - ne pas bloquer la désinscription
+        }
+    }
+    
+    // Méthode pour récupérer l'organisateur d'un événement
+    public Long getOrganisateurId(Long evenementId) {
+        try {
+            String evenementUrl = "http://localhost:8082/api/evenements/" + evenementId;
+            ResponseEntity<String> response = restTemplate.getForEntity(evenementUrl, String.class);
+            
+            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+                JsonNode root = objectMapper.readTree(response.getBody());
+                Long organisateurId = root.path("organisateurId").asLong();
+                
+                if (organisateurId != null && organisateurId > 0) {
+                    log.info("✅ Organisateur trouvé: {} pour événement {}", organisateurId, evenementId);
+                    return organisateurId;
+                }
+            }
+            log.warn("⚠️ Organisateur non trouvé pour événement {}", evenementId);
+            return null;
+        } catch (Exception e) {
+            log.error("❌ Erreur récupération organisateur: {}", e.getMessage());
+            return null;
+        }
+    }
     
     private String getTitreEvenement(Long evenementId) {
         try {
-            String evenementUrl = "http://localhost:8081/api/evenements/" + evenementId;
+            String evenementUrl = "http://localhost:8082/api/evenements/" + evenementId;
             ResponseEntity<String> response = restTemplate.getForEntity(evenementUrl, String.class);
             
             if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
